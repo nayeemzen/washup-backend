@@ -22,7 +22,7 @@ public class PricingResponse {
             this.amountCents = amountCents;
         }
 
-        public String getItem() {s
+        public String getItem() {
             return item;
         }
 
