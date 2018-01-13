@@ -22,6 +22,24 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+
+		<!-- protobuf paths -->
+		<protobuf.input.directory>${project.basedir}/src/main/proto</protobuf.input.directory>
+		<protobuf.output.directory>${project.build.directory}/generated-sources</protobuf.output.directory>
+
+		<!-- library versions -->
+		<build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
+		<maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
+		<maven-dependency-plugin.version>3.0.0</maven-dependency-plugin.version>
+		<maven-shade-plugin.version>3.1.0</maven-shade-plugin.version>
+		<os-maven-plugin.version>1.5.0.Final</os-maven-plugin.version>
+		<protobuf.version>3.5.0</protobuf.version>
+		<protobuf-java-format.version>1.4</protobuf-java-format.version>
+		<jsonwebtoken-jwt>0.7.0</jsonwebtoken-jwt>
+
+		<flyway.version>4.2.0</flyway.version>
+		<mysql.driver.version>5.1.13</mysql.driver.version>
+		<database.driver>com.mysql.jdbc.Driver</database.driver>
 	</properties>
 
 	<dependencies>
@@ -48,18 +66,171 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.jayway.jsonpath</groupId>
-			<artifactId>json-path</artifactId>
-			<scope>test</scope>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>${protobuf.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>kr.motd.maven</groupId>
+			<artifactId>os-maven-plugin</artifactId>
+			<version>1.5.0.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.googlecode.protobuf-java-format</groupId>
+			<artifactId>protobuf-java-format</artifactId>
+			<version>${protobuf-java-format.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>${flyway.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.driver.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>${jsonwebtoken-jwt}</version>
+		</dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.7</version>
+        </dependency>
 	</dependencies>
 
 	<build>
+		<extensions>
+			<!-- provides os.detected.classifier (i.e. linux-x86_64, osx-x86_64) property -->
+			<extension>
+				<groupId>kr.motd.maven</groupId>
+				<artifactId>os-maven-plugin</artifactId>
+				<version>${os-maven-plugin.version}</version>
+			</extension>
+		</extensions>
+
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>${maven-dependency-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>copy-protoc</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.google.protobuf</groupId>
+									<artifactId>protoc</artifactId>
+									<version>3.5.0</version>
+									<classifier>${os.detected.classifier}</classifier>
+									<type>exe</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>${project.build.directory}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${maven-antrun-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>exec-protoc</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<target>
+								<property name="protoc.filename" value="protoc-${protobuf.version}-${os.detected.classifier}.exe"/>
+								<property name="protoc.filepath" value="${project.build.directory}/${protoc.filename}"/>
+								<chmod file="${protoc.filepath}" perm="ugo+rx"/>
+								<mkdir dir="${protobuf.output.directory}" />
+								<path id="protobuf.input.filepaths.path">
+									<fileset dir="${protobuf.input.directory}">
+										<include name="**/*.proto"/>
+									</fileset>
+								</path>
+								<pathconvert pathsep=" " property="protobuf.input.filepaths" refid="protobuf.input.filepaths.path"/>
+								<exec executable="${protoc.filepath}" failonerror="true">
+									<arg value="-I"/>
+									<arg value="${protobuf.input.directory}"/>
+									<arg value="--java_out"/>
+									<arg value="${protobuf.output.directory}"/>
+									<arg line="${protobuf.input.filepaths}"/>
+								</exec>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- add generated proto buffer classes into the package -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>${build-helper-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>add-classes</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${protobuf.output.directory}</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>5.0.5</version>
+            </plugin>
+
 		</plugins>
 	</build>
 
