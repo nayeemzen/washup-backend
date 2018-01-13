@@ -1,4 +1,4 @@
-package com.washup.app.user;
+package com.washup.app.users;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,10 @@ public class UserOperator {
   public UserOperator(Session session, DbUser user) {
     this.session = session;
     this.user = user;
+  }
+
+  public String getEncodedPassword() {
+    return user.getEncodedPassword();
   }
 
   @Component
@@ -40,6 +44,13 @@ public class UserOperator {
     public UserOperator get(Session session, UserToken userToken) {
       DbUser dbUser = (DbUser) session.createCriteria(DbUser.class)
           .add(eq("token", userToken.rawToken()))
+          .uniqueResult();
+      return dbUser != null ? new UserOperator(session, dbUser) : null;
+    }
+
+    public UserOperator getUserByEmail(Session session, String email) {
+      DbUser dbUser = (DbUser) session.createCriteria(DbUser.class)
+          .add(eq("email", email))
           .uniqueResult();
       return dbUser != null ? new UserOperator(session, dbUser) : null;
     }

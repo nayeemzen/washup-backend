@@ -1,4 +1,4 @@
-package com.washup.app.user;
+package com.washup.app.users;
 
 import com.washup.app.database.hibernate.TimestampEntity;
 import org.hibernate.Session;
@@ -13,6 +13,9 @@ public class DbUser extends TimestampEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
+
+  //TODO: add converters to type
+  private String token;
 
   private String firstName;
 
@@ -31,12 +34,32 @@ public class DbUser extends TimestampEntity {
     return id;
   }
 
+  public UserToken getToken() {
+    return UserToken.of(token);
+  }
+
+  public String getFirstName() {
+    return firstName;
+  }
+
+  public String getLastName() {
+    return lastName;
+  }
+
   String getEmail() {
     return email;
   }
 
-  String getPassword() {
+  String getEncodedPassword() {
     return password;
+  }
+
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
+
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
   }
 
   void setPassword(String password) {
@@ -67,6 +90,7 @@ public class DbUser extends TimestampEntity {
                 String hashedPassword,
                 String phoneNumber) {
     DbUser dbUser = new DbUser();
+    dbUser.token = userToken.rawToken();
     dbUser.firstName = firstName;
     dbUser.lastName = lastName;
     dbUser.email = email;

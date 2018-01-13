@@ -20,8 +20,13 @@ public class Token {
     return token;
   }
 
+  @Override
+  public String toString() {
+    return token;
+  }
+
   protected static String generateToken(int length) {
-    return RandomStringUtils.random(length, 0, length - 1, true, true, CHARS,
-        secureRandom);
+    return RandomStringUtils.random(length, 0, CHARS.length, false, false,
+        CHARS, secureRandom);
   }
 }

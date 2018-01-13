@@ -38,6 +38,7 @@ public class Transacter {
           transaction = session.beginTransaction();
           T result = databaseWork.work(session);
           session.flush();
+          connection.commit();
           return result;
         } catch (Throwable e) {
           if (transaction != null) {
