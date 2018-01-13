@@ -21,7 +21,7 @@ public class UserController {
 
   @PostMapping("/sign-up")
   public App.SignUpResponse signUp(@RequestBody App.SignUpRequest request) {
-    transacter.call(session -> {
+    return transacter.call(session -> {
       UserOperator userOperator = userOperatorFactory.create(session,
           request.getFirstName(),
           request.getLastName(),
