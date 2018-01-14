@@ -1,6 +1,7 @@
 package com.washup.app.api.v1.pricing;
 
 import com.washup.app.database.hibernate.Transacter;
+import com.washup.app.exception.BadRequestException;
 import com.washup.protos.App;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,6 @@ public class PricingController {
 
   @RequestMapping("/prices")
   public App.Prices prices() {
-    return App.Prices.newBuilder().setAbc("oooo").build();
+    throw new BadRequestException("a");
   }
 }
