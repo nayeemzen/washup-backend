@@ -83,19 +83,20 @@ public class DbUser extends TimestampEntity {
   }
 
   static DbUser create(Session session,
-                UserToken userToken,
                 String firstName,
                 @Nullable String lastName,
                 String email,
                 String hashedPassword,
-                String phoneNumber) {
+                String phoneNumber,
+                String notes) {
     DbUser dbUser = new DbUser();
-    dbUser.token = userToken.rawToken();
+    dbUser.token = UserToken.generate().rawToken();
     dbUser.firstName = firstName;
     dbUser.lastName = lastName;
     dbUser.email = email;
     dbUser.password = hashedPassword;
     dbUser.phoneNumber = phoneNumber;
+    dbUser.notes = notes;
 
     try {
       session.save(dbUser);

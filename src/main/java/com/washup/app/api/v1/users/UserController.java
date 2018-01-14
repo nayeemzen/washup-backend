@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.washup.app.api.v1.ApiConstants.API_URL;
-import static com.washup.app.api.v1.configuration.SecurityConstants.HEADER_STRING;
-import static com.washup.app.api.v1.configuration.SecurityConstants.TOKEN_PREFIX;
+import static com.washup.app.configuration.SecurityConstants.HEADER_STRING;
+import static com.washup.app.configuration.SecurityConstants.TOKEN_PREFIX;
 
 @RestController
 @RequestMapping(UserController.URL)
@@ -54,7 +54,7 @@ public class UserController {
         try {
           return new ResponseEntity<>(
               JsonFormat.printer().print(alreadyExistResponse),
-              HttpStatus.CONFLICT);
+              HttpStatus.OK);
         } catch (Exception e) {
           throw new RuntimeException(e);
         }
@@ -66,7 +66,8 @@ public class UserController {
           request.getLastName(),
           request.getEmail(),
           request.getPassword(),
-          request.getPhoneNumber());
+          request.getPhoneNumber(),
+          request.getNotes());
       return null;
     });
 

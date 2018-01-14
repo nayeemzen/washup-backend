@@ -14,8 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Date;
 
-import static com.washup.app.api.v1.configuration.SecurityConstants.EXPIRATION_TIME;
-import static com.washup.app.api.v1.configuration.SecurityConstants.SECRET;
+import static com.washup.app.configuration.SecurityConstants.EXPIRATION_TIME;
+import static com.washup.app.configuration.SecurityConstants.SECRET;
 
 public class JWTAuthenticationManager implements AuthenticationManager {
   Transacter transacter;

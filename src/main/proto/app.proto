@@ -14,6 +14,7 @@ message SignUpRequest {
   string email = 3;
   string password = 4;
   string phone_number = 5;
+  string notes = 6;
 }
 
 message SignUpResponse {
@@ -27,4 +28,26 @@ message LoginRequest {
 }
 
 message LoginResponse {
+}
+
+enum OrderType {
+  WASH_FOLD = 0;
+  DRY_CLEAN = 1;
+}
+
+enum OrderStatus {
+  PENDING = 0;
+  PICKED_UP = 1;
+  DROPPED_OFF = 2;
+  BILLED = 3;
+}
+
+message PlaceOrderRequest {
+  OrderType order_type = 1;
+  uint64 pickup_date = 2;
+  uint64 delivery_date = 3;
+  string idempotence_token = 4;
+}
+
+message PlaceOrderResponse{
 }

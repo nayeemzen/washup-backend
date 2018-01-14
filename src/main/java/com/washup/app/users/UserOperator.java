@@ -18,6 +18,10 @@ public class UserOperator {
     this.user = user;
   }
 
+  public long getId() {
+    return user.getId();
+  }
+
   public String getEncodedPassword() {
     return user.getEncodedPassword();
   }
@@ -33,11 +37,12 @@ public class UserOperator {
         @Nullable String lastName,
         String email,
         String rawPassword,
-        String phoneNumber) {
+        String phoneNumber,
+        String notes) {
       // Make sure rawPassword is hashed
       String password = bCryptPasswordEncoder.encode(rawPassword);
-      DbUser dbUser = DbUser.create(session, UserToken.generate(), firstName,
-          lastName, email, password, phoneNumber);
+      DbUser dbUser = DbUser.create(session, firstName, lastName, email,
+          password, phoneNumber, notes);
       return new UserOperator(session, dbUser);
     }
 

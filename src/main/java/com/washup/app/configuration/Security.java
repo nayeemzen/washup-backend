@@ -1,4 +1,4 @@
-package com.washup.app.api.v1.configuration;
+package com.washup.app.configuration;
 
 import com.washup.app.authentication.JWTAuthenticationFilter;
 import com.washup.app.authentication.JWTAuthenticationManager;

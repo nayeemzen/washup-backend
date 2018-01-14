@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.washup.app.api.v1.configuration.SecurityConstants.HEADER_STRING;
-import static com.washup.app.api.v1.configuration.SecurityConstants.TOKEN_PREFIX;
+import static com.washup.app.configuration.SecurityConstants.HEADER_STRING;
+import static com.washup.app.configuration.SecurityConstants.TOKEN_PREFIX;
 
 public class JWTAuthenticationFilter
       extends AbstractAuthenticationProcessingFilter {

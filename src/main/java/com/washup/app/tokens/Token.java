@@ -26,7 +26,11 @@ public class Token {
   }
 
   protected static String generateToken(int length) {
-    return RandomStringUtils.random(length, 0, CHARS.length, false, false,
-        CHARS, secureRandom);
+    return generateToken(CHARS, length);
+  }
+
+  protected static String generateToken(char[] chars, int length) {
+    return RandomStringUtils.random(length, 0, chars.length, false, false,
+        chars, secureRandom);
   }
 }
