@@ -34,9 +34,9 @@ public class OrderController {
     ParametersChecker.check(request.getPickupDate() != 0,
         "pickup_date is missing");
 
-    transacter.call(session -> {
-      UserOperator user = userOperatorFactory.getUserByEmail(session,
-          (String) authentication.getPrincipal());
+    transacter.execute(session -> {
+      UserOperator user = userOperatorFactory.getAuthenticatedUser(session,
+          authentication);
       orderOperatorFactory.create(session,
           user.getId(),
           request.getOrderType().name(),
@@ -44,7 +44,6 @@ public class OrderController {
           App.OrderStatus.PENDING.name(),
           request.getDeliveryDate(),
           request.getPickupDate());
-      return null;
     });
 
     return App.PlaceOrderResponse.newBuilder().build();

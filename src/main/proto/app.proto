@@ -14,7 +14,6 @@ message SignUpRequest {
   string email = 3;
   string password = 4;
   string phone_number = 5;
-  string notes = 6;
 }
 
 message SignUpResponse {
@@ -50,4 +49,44 @@ message PlaceOrderRequest {
 }
 
 message PlaceOrderResponse{
+}
+
+message Address {
+  string street_address = 1;
+  string apt = 2;
+  string postal_code = 3;
+  string notes = 4;
+}
+
+message GetAddressRequest {
+}
+
+message GetAddressResponse {
+  Address address = 1;
+}
+
+message SetAddressRequest {
+  Address address = 1;
+}
+
+message SetAddressResponse {
+  Address address = 1;
+}
+
+message User {
+  string first_name = 1;
+  string last_name = 2;
+  string phone_number = 3;
+}
+
+message GetProfileResponse {
+  User user = 1;
+}
+
+message SetProfileRequest {
+  User user = 1;
+}
+
+message SetProfileResponse {
+  User user = 1;
 }

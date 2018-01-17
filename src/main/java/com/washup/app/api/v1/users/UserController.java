@@ -11,10 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import static com.washup.app.api.v1.ApiConstants.API_URL;
 import static com.washup.app.configuration.SecurityConstants.HEADER_STRING;
@@ -66,8 +64,7 @@ public class UserController {
           request.getLastName(),
           request.getEmail(),
           request.getPassword(),
-          request.getPhoneNumber(),
-          request.getNotes());
+          request.getPhoneNumber());
       return null;
     });
 
@@ -82,9 +79,41 @@ public class UserController {
     return new ResponseEntity<>("", responseHeaders, HttpStatus.CREATED);
   }
 
-  @PostMapping("/login")
-  public App.LoginResponse login(@RequestBody App.LoginRequest loginRequest) {
-    // Dummy does not do anything. JWTAuthenticationFilter does the work.
-    return App.LoginResponse.newBuilder().build();
+  @PostMapping("/set-profile")
+  public App.SetProfileResponse setProfile(
+      @RequestBody App.SetProfileRequest request,
+      Authentication authentication) {
+    App.User user = request.getUser();
+    ParametersChecker.check(user != null, "user is missing");
+    ParametersChecker.check(!Strings.isNullOrEmpty(user.getFirstName()),
+        "first_name is missing");
+    ParametersChecker.check(!Strings.isNullOrEmpty(user.getLastName()),
+        "last_name is missing");
+    ParametersChecker.check(!Strings.isNullOrEmpty(user.getPhoneNumber()),
+        "phone_number is missing");
+    App.User updatedUser = transacter.call(session -> {
+      UserOperator currentUser = userOperatorFactory.getAuthenticatedUser(
+          session, authentication);
+      currentUser.setFirstName(user.getFirstName())
+          .setLastName(user.getLastName())
+          .setPhoneNumber(user.getPhoneNumber())
+          .update();
+      return currentUser.toProto();
+    });
+    return App.SetProfileResponse.newBuilder()
+        .setUser(updatedUser)
+        .build();
+  }
+
+  @GetMapping("/get-profile")
+  public App.GetProfileResponse getProfile(Authentication authentication) {
+    App.User updatedUser = transacter.call(session -> {
+      UserOperator currentUser = userOperatorFactory.getAuthenticatedUser(
+          session, authentication);
+      return currentUser.toProto();
+    });
+    return App.GetProfileResponse.newBuilder()
+        .setUser(updatedUser)
+        .build();
   }
 }

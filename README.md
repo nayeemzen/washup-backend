@@ -24,10 +24,39 @@ curl -i -H "Content-Type: application/json" -X POST -d '{
 
 
 Order
-==
+===
 curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN_HERE" -X POST -d '{
   "order_type": 0, 
   "delivery_date": 1515900795000, 
   "pickup_date": 1515801600000, 
   "idempotence_token": "abc"
 }' http://localhost:8080/api/v1/orders/place-order
+
+
+User
+===
+GetProfile
+====
+curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN_HERE" -X GET  http://localhost:8080/api/v1/users/get-profile
+
+SetProfile
+====
+curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN_HERE" -X POST -d '{
+  "user": {"first_name": "jack", "last_name": "nelson", "phone_number": "1233322"}
+  }' http://localhost:8080/api/v1/users/set-profile
+
+
+Address
+===
+GetAddress
+====
+curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN_HERE" -X GET  http://localhost:8080/api/v1/users/get-address
+
+SetAddress
+====
+curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN_HERE" -X POST -d '{
+  "street_address": "143 ali st", 
+  "apt": "40", 
+  "postal_code": "", 
+  "notes": "abc"
+}' http://localhost:8080/api/v1/users/set-address

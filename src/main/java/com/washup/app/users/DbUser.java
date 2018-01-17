@@ -1,6 +1,7 @@
 package com.washup.app.users;
 
 import com.washup.app.database.hibernate.TimestampEntity;
+import com.washup.protos.App;
 import org.hibernate.Session;
 
 import javax.annotation.Nullable;
@@ -27,8 +28,6 @@ public class DbUser extends TimestampEntity {
   private String password;
 
   private String phoneNumber;
-
-  private String notes;
 
   long getId() {
     return id;
@@ -74,12 +73,12 @@ public class DbUser extends TimestampEntity {
     this.phoneNumber = phoneNumber;
   }
 
-  String getNotes() {
-    return notes;
-  }
-
-  void setNotes(String notes) {
-    this.notes = notes;
+  App.User toProto() {
+    return App.User.newBuilder()
+        .setFirstName(firstName)
+        .setLastName(lastName)
+        .setPhoneNumber(phoneNumber)
+        .build();
   }
 
   static DbUser create(Session session,
@@ -87,8 +86,7 @@ public class DbUser extends TimestampEntity {
                 @Nullable String lastName,
                 String email,
                 String hashedPassword,
-                String phoneNumber,
-                String notes) {
+                String phoneNumber) {
     DbUser dbUser = new DbUser();
     dbUser.token = UserToken.generate().rawToken();
     dbUser.firstName = firstName;
@@ -96,7 +94,6 @@ public class DbUser extends TimestampEntity {
     dbUser.email = email;
     dbUser.password = hashedPassword;
     dbUser.phoneNumber = phoneNumber;
-    dbUser.notes = notes;
 
     try {
       session.save(dbUser);

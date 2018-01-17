@@ -56,6 +56,13 @@ public class Transacter {
     }
   }
 
+  public void execute(final VoidDatabaseWork databaseWork) {
+    call(session -> {
+      databaseWork.work(session);
+      return null;
+    });
+  }
+
   private @Nullable Session getCurrentSession() {
     // TODO: add some session validation like readonly transactions not nested
     // inside of RW transaction.
