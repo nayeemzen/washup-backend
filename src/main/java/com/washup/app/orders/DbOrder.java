@@ -1,30 +1,36 @@
 package com.washup.app.orders;
 
+import static com.google.common.base.Preconditions.checkState;
+
+import com.washup.app.database.hibernate.Id;
+import com.washup.app.database.hibernate.IdEntity;
 import com.washup.app.database.hibernate.TimestampEntity;
+import com.washup.app.users.DbUser;
+import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Table;
+import javax.validation.ConstraintViolationException;
 import org.hibernate.Session;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
-import javax.persistence.*;
-import javax.validation.ConstraintViolationException;
-import java.util.Date;
-
-import static com.google.common.base.Preconditions.checkState;
-
 @Entity(name = "orders")
 @Table(name = "orders")
-public class DbOrder extends TimestampEntity {
-  @Id
+public class DbOrder extends TimestampEntity implements IdEntity {
+
+  @javax.persistence.Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private Long id;
 
   //TODO: add converters to type
   private String token;
 
   private String idempotenceToken;
 
-  private long userId;
+  private Long userId;
 
   private String orderType;
 
@@ -33,75 +39,76 @@ public class DbOrder extends TimestampEntity {
 
   private long totalCostCents;
 
-  @Type(type="timestamp")
+  @Type(type = "timestamp")
   private Date pickupDate;
 
-  @Type(type="timestamp")
+  @Type(type = "timestamp")
   private Date deliveryDate;
 
   private boolean rushService;
 
-  long getId() {
-    return id;
+  @Override
+  public Id<DbOrder> getId() {
+    return new Id<>(id);
   }
 
-  public OrderToken getToken() {
+  OrderToken getToken() {
     return OrderToken.of(token);
   }
 
-  public String getOrderType() {
+  String getOrderType() {
     return orderType;
   }
 
-  public long getUserId() {
-    return userId;
+  Id<DbUser> getUserId() {
+    return new Id<>(userId);
   }
 
-  public String getStatus() {
+  String getStatus() {
     return status;
   }
 
-  public String getIdempotenceToken() {
+  String getIdempotenceToken() {
     return idempotenceToken;
   }
 
-  public DateTime getPickupDate() {
+  DateTime getPickupDate() {
     return new DateTime(deliveryDate);
   }
 
-  public DateTime getDeliveryDate() {
+  DateTime getDeliveryDate() {
     return new DateTime(deliveryDate);
   }
 
-  public long getTotalCostCents() {
+  long getTotalCostCents() {
     return totalCostCents;
   }
 
-  public boolean isRushService() {
+  boolean isRushService() {
     return rushService;
   }
 
-  public void setStatus(String status) {
+  void setStatus(String status) {
     this.status = status;
   }
 
-  public void setTotalCostCents(long totalCostCents) {
+  void setTotalCostCents(long totalCostCents) {
     this.totalCostCents = totalCostCents;
   }
 
-  public void setRushService(boolean rushService) {
+  void setRushService(boolean rushService) {
     this.rushService = rushService;
   }
 
-  static DbOrder create(Session session, long userId, String idempotentToken,
-     String orderType, String status, DateTime deliveryDate,
-     DateTime pickupDate) {
+  static DbOrder create(Session session, Id<DbUser> userId, String idempotentToken,
+      String orderType, String status, DateTime deliveryDate,
+      DateTime pickupDate) {
     checkState(deliveryDate.isAfter(pickupDate));
     DbOrder order = new DbOrder();
-    order.token = OrderToken.generate().rawToken();
+    order.token = OrderToken.generate().getId();
     order.orderType = orderType;
     order.idempotenceToken = idempotentToken;
-    order.userId = userId;
+    order.userId = userId.getId();
     order.status = status;
     order.totalCostCents = 0L;
     order.pickupDate = pickupDate.toDate();

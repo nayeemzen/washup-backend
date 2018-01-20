@@ -1,5 +1,8 @@
 package com.washup.app.api.v1.users;
 
+import static com.google.common.base.Preconditions.checkState;
+import static com.washup.app.api.v1.ApiConstants.API_URL;
+
 import com.google.common.base.Strings;
 import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.exception.ParametersChecker;
@@ -8,19 +11,26 @@ import com.washup.app.users.UserOperator;
 import com.washup.protos.App;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
-
-import static com.google.common.base.Preconditions.checkState;
-import static com.washup.app.api.v1.ApiConstants.API_URL;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(AddressController.URL)
 public class AddressController {
+
   static final String URL = API_URL + "/users";
 
-  @Autowired Transacter transacter;
-  @Autowired AddressOperator.Factory addressOperatorFactory;
-  @Autowired UserOperator.Factory userOperatorFactory;
+  @Autowired
+  Transacter transacter;
+
+  @Autowired
+  AddressOperator.Factory addressOperatorFactory;
+
+  @Autowired
+  UserOperator.Factory userOperatorFactory;
 
   @PostMapping("/set-address")
   public App.SetAddressResponse SetAddress(
@@ -40,8 +50,7 @@ public class AddressController {
       AddressOperator addressOperator =
           addressOperatorFactory.get(session, user.getId());
       if (addressOperator == null) {
-        addressOperator = addressOperatorFactory.create(
-            session,
+        addressOperator = addressOperatorFactory.create(session,
             user.getId(),
             address.getStreetAddress(),
             address.getApt(),

@@ -18,6 +18,7 @@ import static com.washup.app.configuration.SecurityConstants.EXPIRATION_TIME;
 import static com.washup.app.configuration.SecurityConstants.SECRET;
 
 public class JWTAuthenticationManager implements AuthenticationManager {
+
   Transacter transacter;
   UserOperator.Factory userOperatorFactory;
   BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -37,7 +38,7 @@ public class JWTAuthenticationManager implements AuthenticationManager {
     String rawPassword = (String) authentication.getCredentials();
 
     UserOperator user = transacter.call(session ->
-      userOperatorFactory.getUserByEmail(session, email));
+        userOperatorFactory.getUserByEmail(session, email));
     // if user is not found throw
     if (user == null) {
       throw new BadCredentialsException("Email or Password is incorrect!");
@@ -45,7 +46,7 @@ public class JWTAuthenticationManager implements AuthenticationManager {
 
     // if password doesn't match, throw
     if (!bCryptPasswordEncoder.matches(rawPassword,
-          user.getEncodedPassword())) {
+        user.getEncodedPassword())) {
       throw new BadCredentialsException("Email or Password is incorrect!");
     }
 

@@ -17,11 +17,17 @@ import static com.washup.app.api.v1.ApiConstants.API_URL;
 @RestController
 @RequestMapping(OrderController.URL)
 public class OrderController {
+
   static final String URL = API_URL + "/orders";
 
-  @Autowired Transacter transacter;
-  @Autowired OrderOperator.Factory orderOperatorFactory;
-  @Autowired UserOperator.Factory userOperatorFactory;
+  @Autowired
+  Transacter transacter;
+
+  @Autowired
+  OrderOperator.Factory orderOperatorFactory;
+
+  @Autowired
+  UserOperator.Factory userOperatorFactory;
 
   @PostMapping("/place-order")
   public App.PlaceOrderResponse placeOrder(

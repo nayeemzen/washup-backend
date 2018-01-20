@@ -1,23 +1,28 @@
 package com.washup.app.users;
 
+import static org.hibernate.criterion.Restrictions.eq;
+
+import com.washup.app.database.hibernate.Id;
+import com.washup.app.database.hibernate.IdEntity;
 import com.washup.app.database.hibernate.TimestampEntity;
 import com.washup.protos.App;
-import org.hibernate.Session;
-
 import javax.annotation.Nullable;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Table;
 import javax.validation.ConstraintViolationException;
-
-import static org.hibernate.criterion.Restrictions.eq;
+import org.hibernate.Session;
 
 @Entity(name = "addresses")
 @Table(name = "addresses")
-public class DbAddress extends TimestampEntity {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+public class DbAddress extends TimestampEntity implements IdEntity {
 
-  private long userId;
+  @javax.persistence.Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  private Long userId;
 
   private String streetAddress;
 
@@ -27,8 +32,8 @@ public class DbAddress extends TimestampEntity {
 
   private String notes;
 
-  public long getId() {
-    return id;
+  public Id<DbAddress> getId() {
+    return new Id<>(id);
   }
 
   public String getStreetAddress() {
@@ -76,20 +81,21 @@ public class DbAddress extends TimestampEntity {
         .build();
   }
 
-  static @Nullable DbAddress get(Session session, long userId) {
+  static @Nullable
+  DbAddress get(Session session, Id<DbUser> userId) {
     return (DbAddress) session.createCriteria(DbAddress.class)
         .add(eq("userId", userId))
         .uniqueResult();
   }
 
   static DbAddress create(Session session,
-                          long userId,
-                          String streetAddress,
-                          @Nullable String apt,
-                          String postalCode,
-                          @Nullable String notes) {
+      Id<DbUser> userId,
+      String streetAddress,
+      @Nullable String apt,
+      String postalCode,
+      @Nullable String notes) {
     DbAddress dbAddress = new DbAddress();
-    dbAddress.userId = userId;
+    dbAddress.userId = userId.getId();
     dbAddress.streetAddress = streetAddress;
     dbAddress.apt = apt;
     dbAddress.postalCode = postalCode;

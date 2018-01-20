@@ -1,6 +1,7 @@
 package com.washup.app.users;
 
 import com.google.common.base.Strings;
+import com.washup.app.database.hibernate.Id;
 import com.washup.protos.App;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.hibernate.criterion.Restrictions.eq;
 
 public class UserOperator {
+
   private final Session session;
   private final DbUser user;
 
@@ -23,7 +25,7 @@ public class UserOperator {
     this.user = user;
   }
 
-  public long getId() {
+  public Id<DbUser> getId() {
     return user.getId();
   }
 
@@ -60,6 +62,7 @@ public class UserOperator {
 
   @Component
   public static class Factory {
+
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -79,7 +82,7 @@ public class UserOperator {
 
     public UserOperator get(Session session, UserToken userToken) {
       DbUser dbUser = (DbUser) session.createCriteria(DbUser.class)
-          .add(eq("token", userToken.rawToken()))
+          .add(eq("token", userToken.getId()))
           .uniqueResult();
       return dbUser != null ? new UserOperator(session, dbUser) : null;
     }

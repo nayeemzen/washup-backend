@@ -1,21 +1,28 @@
 package com.washup.app.users;
 
+import com.washup.app.database.hibernate.Id;
+import com.washup.app.database.hibernate.IdEntity;
+import com.washup.app.database.hibernate.StoreAsString;
 import com.washup.app.database.hibernate.TimestampEntity;
 import com.washup.protos.App;
-import org.hibernate.Session;
-
 import javax.annotation.Nullable;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Table;
 import javax.validation.ConstraintViolationException;
+import org.hibernate.Session;
 
 @Entity(name = "users")
 @Table(name = "users")
-public class DbUser extends TimestampEntity {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+public class DbUser extends TimestampEntity implements IdEntity {
 
-  //TODO: add converters to type
+  @javax.persistence.Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+  @StoreAsString
   private String token;
 
   private String firstName;
@@ -29,12 +36,13 @@ public class DbUser extends TimestampEntity {
 
   private String phoneNumber;
 
-  long getId() {
-    return id;
+  @Override
+  public Id<DbUser> getId() {
+    return new Id<>(id);
   }
 
   public UserToken getToken() {
-    return UserToken.of(token);
+    return new UserToken(token);
   }
 
   public String getFirstName() {
@@ -82,13 +90,13 @@ public class DbUser extends TimestampEntity {
   }
 
   static DbUser create(Session session,
-                String firstName,
-                @Nullable String lastName,
-                String email,
-                String hashedPassword,
-                String phoneNumber) {
+      String firstName,
+      @Nullable String lastName,
+      String email,
+      String hashedPassword,
+      String phoneNumber) {
     DbUser dbUser = new DbUser();
-    dbUser.token = UserToken.generate().rawToken();
+    dbUser.token = UserToken.generate().getId();
     dbUser.firstName = firstName;
     dbUser.lastName = lastName;
     dbUser.email = email;

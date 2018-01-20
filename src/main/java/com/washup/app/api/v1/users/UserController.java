@@ -21,10 +21,14 @@ import static com.washup.app.configuration.SecurityConstants.TOKEN_PREFIX;
 @RestController
 @RequestMapping(UserController.URL)
 public class UserController {
+
   static final String URL = API_URL + "/users";
 
-  @Autowired Transacter transacter;
-  @Autowired UserOperator.Factory userOperatorFactory;
+  @Autowired
+  Transacter transacter;
+
+  @Autowired
+  UserOperator.Factory userOperatorFactory;
 
   @PostMapping("/sign-up")
   public ResponseEntity<String> signUp(
