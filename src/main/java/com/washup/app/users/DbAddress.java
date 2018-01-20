@@ -84,7 +84,7 @@ public class DbAddress extends TimestampEntity implements IdEntity {
   static @Nullable
   DbAddress get(Session session, Id<DbUser> userId) {
     return (DbAddress) session.createCriteria(DbAddress.class)
-        .add(eq("userId", userId))
+        .add(eq("userId", userId.getId()))
         .uniqueResult();
   }
 
