@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package washup.protos.app;
+
+option java_package = "com.washup.protos";
+
+message WashEmployeeLoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message WashEmployeeLoginResponse {
+}

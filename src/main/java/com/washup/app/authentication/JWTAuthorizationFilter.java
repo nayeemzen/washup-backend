@@ -28,6 +28,10 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
   protected void doFilterInternal(HttpServletRequest req,
       HttpServletResponse res, FilterChain chain)
       throws IOException, ServletException {
+    // Don't authorize if not hitting the api end point.
+    if (!req.getServletPath().startsWith("/api/")) {
+      return;
+    }
     String header = req.getHeader(HEADER_STRING);
     if (header == null || !header.startsWith(TOKEN_PREFIX)) {
       chain.doFilter(req, res);
