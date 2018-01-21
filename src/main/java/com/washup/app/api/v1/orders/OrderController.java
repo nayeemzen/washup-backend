@@ -24,8 +24,7 @@ public class OrderController {
   @Autowired UserOperator.Factory userOperatorFactory;
 
   @PostMapping("/place-order")
-  public App.PlaceOrderResponse placeOrder(
-      @RequestBody App.PlaceOrderRequest request,
+  public App.PlaceOrderResponse placeOrder(@RequestBody App.PlaceOrderRequest request,
       Authentication authentication) {
     ParametersChecker.check(request.getOrderType() != null,
         "order_type is missing");
@@ -35,8 +34,7 @@ public class OrderController {
         "pickup_date is missing");
 
     transacter.execute(session -> {
-      UserOperator user = userOperatorFactory.getAuthenticatedUser(session,
-          authentication);
+      UserOperator user = userOperatorFactory.getAuthenticatedUser(session, authentication);
       orderOperatorFactory.create(session,
           user.getId(),
           request.getOrderType().name(),

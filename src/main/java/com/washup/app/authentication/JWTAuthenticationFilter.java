@@ -54,8 +54,7 @@ public class JWTAuthenticationFilter
         HttpServletResponse res, FilterChain chain, Authentication auth)
         throws IOException, ServletException {
       checkState(auth.isAuthenticated());
-      String token = JWTAuthenticationManager.getJwtToken(
-          (String) auth.getPrincipal());
+      String token = JWTAuthenticationManager.getJwtToken((String) auth.getPrincipal());
       res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
     }
 }

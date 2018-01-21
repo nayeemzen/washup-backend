@@ -1,6 +1,7 @@
 package com.washup.app.api.v1.users;
 
 import com.google.common.base.Strings;
+import com.google.gson.JsonObject;
 import com.google.protobuf.util.JsonFormat;
 import com.washup.app.authentication.JWTAuthenticationManager;
 import com.washup.app.database.hibernate.Transacter;
@@ -108,10 +109,10 @@ public class UserController {
   @GetMapping("/get-profile")
   public App.GetProfileResponse getProfile(Authentication authentication) {
     App.User updatedUser = transacter.call(session -> {
-      UserOperator currentUser = userOperatorFactory.getAuthenticatedUser(
-          session, authentication);
+      UserOperator currentUser = userOperatorFactory.getAuthenticatedUser(session, authentication);
       return currentUser.toProto();
     });
+
     return App.GetProfileResponse.newBuilder()
         .setUser(updatedUser)
         .build();

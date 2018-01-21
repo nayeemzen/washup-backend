@@ -91,10 +91,8 @@ public class UserOperator {
       return dbUser != null ? new UserOperator(session, dbUser) : null;
     }
 
-    public UserOperator getAuthenticatedUser(Session session,
-        Authentication authentication) {
-      UserOperator user =
-          getUserByEmail(session, (String) authentication.getPrincipal());
+    public UserOperator getAuthenticatedUser(Session session, Authentication authentication) {
+      UserOperator user = getUserByEmail(session, (String) authentication.getPrincipal());
       checkState(user != null);
       return user;
     }
