@@ -20,52 +20,52 @@ import static com.washup.app.configuration.SecurityConstants.*;
 
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
-    public JWTAuthorizationFilter(AuthenticationManager authManager) {
-        super(authManager);
+  public JWTAuthorizationFilter(AuthenticationManager authManager) {
+    super(authManager);
+  }
+
+  @Override
+  protected void doFilterInternal(HttpServletRequest req,
+      HttpServletResponse res, FilterChain chain)
+      throws IOException, ServletException {
+    String header = req.getHeader(HEADER_STRING);
+    if (header == null || !header.startsWith(TOKEN_PREFIX)) {
+      chain.doFilter(req, res);
+      return;
     }
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest req,
-          HttpServletResponse res, FilterChain chain)
-        throws IOException, ServletException {
-        String header = req.getHeader(HEADER_STRING);
-        if (header == null || !header.startsWith(TOKEN_PREFIX)) {
-            chain.doFilter(req, res);
-            return;
-        }
+    UsernamePasswordAuthenticationToken authentication =
+        getAuthentication(req);
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+    chain.doFilter(req, res);
+  }
 
-        UsernamePasswordAuthenticationToken authentication =
-            getAuthentication(req);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        chain.doFilter(req, res);
-    }
-
-    private UsernamePasswordAuthenticationToken getAuthentication(
-          HttpServletRequest request) {
-      String token = request.getHeader(HEADER_STRING);
-      if (token == null) {
-        return null;
-      }
-
-      Jws<Claims> claimsJws;
-      try {
-        claimsJws = Jwts.parser()
-            .setSigningKey(SECRET.getBytes())
-            // parse will throw if their is a signature mismatch
-            .parseClaimsJws(token.replace(TOKEN_PREFIX, ""));
-      } catch (SignatureException e) {
-        // the signature was fidled locally.
-        //LOG
-        return null;
-      }
-
-      String user = claimsJws
-          .getBody()
-          .getSubject();
-      if (user != null) {
-        return new UsernamePasswordAuthenticationToken(user, null,
-            new ArrayList<>());
-      }
+  private UsernamePasswordAuthenticationToken getAuthentication(
+      HttpServletRequest request) {
+    String token = request.getHeader(HEADER_STRING);
+    if (token == null) {
       return null;
     }
+
+    Jws<Claims> claimsJws;
+    try {
+      claimsJws = Jwts.parser()
+          .setSigningKey(SECRET.getBytes())
+          // parse will throw if their is a signature mismatch
+          .parseClaimsJws(token.replace(TOKEN_PREFIX, ""));
+    } catch (SignatureException e) {
+      // the signature was fidled locally.
+      //LOG
+      return null;
+    }
+
+    String user = claimsJws
+        .getBody()
+        .getSubject();
+    if (user != null) {
+      return new UsernamePasswordAuthenticationToken(user, null,
+          new ArrayList<>());
+    }
+    return null;
+  }
 }

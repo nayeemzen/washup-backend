@@ -1,20 +1,21 @@
 package com.washup.app.users;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static org.hibernate.criterion.Restrictions.eq;
+
 import com.google.common.base.Strings;
+import com.washup.app.database.hibernate.Id;
 import com.washup.protos.App;
+import javax.annotation.Nullable;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-import static org.hibernate.criterion.Restrictions.eq;
-
 public class UserOperator {
+
   private final Session session;
   private final DbUser user;
 
@@ -23,7 +24,7 @@ public class UserOperator {
     this.user = user;
   }
 
-  public long getId() {
+  public Id<DbUser> getId() {
     return user.getId();
   }
 
@@ -60,8 +61,12 @@ public class UserOperator {
 
   @Component
   public static class Factory {
+
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    PreferenceOperator.Factory preferenceOperatorFactory;
 
     public UserOperator create(
         Session session,
@@ -74,12 +79,13 @@ public class UserOperator {
       String password = bCryptPasswordEncoder.encode(rawPassword);
       DbUser dbUser = DbUser.create(session, firstName, lastName, email,
           password, phoneNumber);
+      preferenceOperatorFactory.createWithDefault(session, dbUser.getId());
       return new UserOperator(session, dbUser);
     }
 
     public UserOperator get(Session session, UserToken userToken) {
       DbUser dbUser = (DbUser) session.createCriteria(DbUser.class)
-          .add(eq("token", userToken.rawToken()))
+          .add(eq("token", userToken.getId()))
           .uniqueResult();
       return dbUser != null ? new UserOperator(session, dbUser) : null;
     }

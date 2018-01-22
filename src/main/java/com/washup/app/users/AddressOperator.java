@@ -1,5 +1,6 @@
 package com.washup.app.users;
 
+import com.washup.app.database.hibernate.Id;
 import com.washup.protos.App;
 import org.hibernate.Session;
 import org.springframework.stereotype.Component;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 
 public class AddressOperator {
+
   private final Session session;
   private final DbAddress address;
 
@@ -15,7 +17,7 @@ public class AddressOperator {
     this.address = address;
   }
 
-  public long getId() {
+  public Id<DbAddress> getId() {
     return address.getId();
   }
 
@@ -50,9 +52,11 @@ public class AddressOperator {
 
   @Component
   public static class Factory {
-    public @Nullable AddressOperator get(
+
+    public @Nullable
+    AddressOperator get(
         Session session,
-        long userId) {
+        Id<DbUser> userId) {
       DbAddress existingAddress = DbAddress.get(session, userId);
       return existingAddress != null
           ? new AddressOperator(session, existingAddress)
@@ -61,7 +65,7 @@ public class AddressOperator {
 
     public AddressOperator create(
         Session session,
-        long userId,
+        Id<DbUser> userId,
         String streetAddress,
         @Nullable String apt,
         String postalCode,

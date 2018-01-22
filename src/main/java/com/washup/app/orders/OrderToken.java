@@ -5,6 +5,7 @@ import com.washup.app.tokens.Token;
 import static com.google.common.base.Preconditions.checkArgument;
 
 public class OrderToken extends Token {
+
   private static final int LENGTH = 8;
   private static final String PREFIX = "#";
   private static final char[] CHARS =

@@ -20,9 +20,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 public class Security extends WebSecurityConfigurerAdapter {
-  @Autowired Transacter transacter;
-  @Autowired UserOperator.Factory userOperatorFactory;
-  @Autowired BCryptPasswordEncoder bCryptPasswordEncoder;
+
+  @Autowired
+  Transacter transacter;
+
+  @Autowired
+  UserOperator.Factory userOperatorFactory;
+
+  @Autowired
+  BCryptPasswordEncoder bCryptPasswordEncoder;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {

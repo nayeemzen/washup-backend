@@ -20,41 +20,41 @@ import static com.washup.app.configuration.SecurityConstants.HEADER_STRING;
 import static com.washup.app.configuration.SecurityConstants.TOKEN_PREFIX;
 
 public class JWTAuthenticationFilter
-      extends AbstractAuthenticationProcessingFilter {
-    private final JWTAuthenticationManager jwtAuthenticationManager;
+    extends AbstractAuthenticationProcessingFilter {
 
-    public JWTAuthenticationFilter(
-        JWTAuthenticationManager jwtAuthenticationManager) {
-      super(new AntPathRequestMatcher("/api/v1/users/login", "POST"));
-      this.jwtAuthenticationManager = jwtAuthenticationManager;
+  private final JWTAuthenticationManager jwtAuthenticationManager;
+
+  public JWTAuthenticationFilter(
+      JWTAuthenticationManager jwtAuthenticationManager) {
+    super(new AntPathRequestMatcher("/api/v1/users/login", "POST"));
+    this.jwtAuthenticationManager = jwtAuthenticationManager;
+  }
+
+  @Override
+  public Authentication attemptAuthentication(HttpServletRequest req,
+      HttpServletResponse res) throws AuthenticationException {
+    if (!req.getServletPath().contains("/api/v1/users/login")) {
+      return null;
     }
 
-    @Override
-    public Authentication attemptAuthentication(HttpServletRequest req,
-          HttpServletResponse res) throws AuthenticationException {
-      if (!req.getServletPath().contains("/api/v1/users/login")) {
-        return null;
-      }
-
-      App.LoginRequest.Builder credentials = App.LoginRequest.newBuilder();
-      try {
-        JsonFormat.parser().merge(req.getReader(), credentials);
-      } catch (Exception e){
-        throw new BadCredentialsException("invalid email or password");
-      }
-
-      UsernamePasswordAuthenticationToken authentication =
-          new UsernamePasswordAuthenticationToken(credentials.getEmail(),
-              credentials.getPassword());
-      return jwtAuthenticationManager.authenticate(authentication);
+    App.LoginRequest.Builder credentials = App.LoginRequest.newBuilder();
+    try {
+      JsonFormat.parser().merge(req.getReader(), credentials);
+    } catch (Exception e) {
+      throw new BadCredentialsException("invalid email or password");
     }
 
-    @Override
-    protected void successfulAuthentication(HttpServletRequest req,
-        HttpServletResponse res, FilterChain chain, Authentication auth)
-        throws IOException, ServletException {
-      checkState(auth.isAuthenticated());
-      String token = JWTAuthenticationManager.getJwtToken((String) auth.getPrincipal());
-      res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
-    }
+    UsernamePasswordAuthenticationToken authentication =
+        new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword());
+    return jwtAuthenticationManager.authenticate(authentication);
+  }
+
+  @Override
+  protected void successfulAuthentication(HttpServletRequest req,
+      HttpServletResponse res, FilterChain chain, Authentication auth)
+      throws IOException, ServletException {
+    checkState(auth.isAuthenticated());
+    String token = JWTAuthenticationManager.getJwtToken((String) auth.getPrincipal());
+    res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+  }
 }

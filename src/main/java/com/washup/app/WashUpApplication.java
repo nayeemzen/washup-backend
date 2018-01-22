@@ -9,17 +9,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @SpringBootApplication
 public class WashUpApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(WashUpApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(WashUpApplication.class, args);
+  }
 
-	@Bean
-	ProtobufHttpMessageConverter httpMessageConverter() {
-		return new ProtobufHttpMessageConverter();
-	}
+  @Bean
+  ProtobufHttpMessageConverter httpMessageConverter() {
+    return new ProtobufHttpMessageConverter();
+  }
 
-	@Bean
-	public BCryptPasswordEncoder bCryptPasswordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+  @Bean
+  public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 }

@@ -90,3 +90,22 @@ message SetProfileRequest {
 message SetProfileResponse {
   User user = 1;
 }
+
+message Preference {
+  bool scented = 1;
+  bool fabric_softener = 2;
+  bool one_day_delivery = 3;
+  bool laundry_reminder = 4;
+}
+
+message SetPreferenceRequest {
+  Preference preference = 1;
+}
+
+message SetPreferenceResponse {
+  Preference preference = 1;
+}
+
+message GetPreferenceResponse {
+  Preference preference = 1;
+}

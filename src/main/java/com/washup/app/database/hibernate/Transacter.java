@@ -1,18 +1,19 @@
 package com.washup.app.database.hibernate;
 
+import static com.google.common.base.Preconditions.checkState;
+
+import javax.annotation.Nullable;
+import javax.persistence.EntityManagerFactory;
 import org.hibernate.Session;
+import org.hibernate.SessionBuilder;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.jdbc.ReturningWork;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nullable;
-import javax.persistence.EntityManagerFactory;
-
-import static com.google.common.base.Preconditions.checkState;
-
 @Service
 public class Transacter {
+
   static final ThreadLocal<Session> CURRENT_SESSION = new ThreadLocal<>();
 
   SessionFactory sessionFactory;
@@ -29,7 +30,7 @@ public class Transacter {
         "Already in a session! Nested sessions not allowed yet.");
     final Session session;
     try {
-      session = sessionFactory.openSession();
+      session = getSessionBuilder().openSession();
       CURRENT_SESSION.set(session);
       ReturningWork<T> returningWork = connection -> {
         Transaction transaction = null;
@@ -63,9 +64,14 @@ public class Transacter {
     });
   }
 
-  private @Nullable Session getCurrentSession() {
+  private @Nullable
+  Session getCurrentSession() {
     // TODO: add some session validation like readonly transactions not nested
     // inside of RW transaction.
     return CURRENT_SESSION.get();
+  }
+
+  private SessionBuilder getSessionBuilder() {
+    return sessionFactory.withOptions();
   }
 }

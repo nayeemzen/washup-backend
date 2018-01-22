@@ -60,3 +60,21 @@ curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN
   "postal_code": "", 
   "notes": "abc"
 }' http://localhost:8080/api/v1/users/set-address
+
+Preferences
+===
+SetPreference
+====
+curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN" -X POST -d '
+{
+  "preference": {
+    "scented": true, 
+    "fabric_softener": true, 
+    "one_day_delivery": true, 
+    "laundry_reminder": true
+  }
+}' http://localhost:8080/api/v1/users/set-preferences
+
+GetPreference
+====
+curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN" -X GET http://localhost:8080/api/v1/users/get-preferences

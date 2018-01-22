@@ -5,6 +5,7 @@ import com.washup.app.tokens.Token;
 import static com.google.common.base.Preconditions.checkArgument;
 
 public class UserToken extends Token {
+
   private static final int LENGTH = 16;
   private static final String PREFIX = "U_";
 
