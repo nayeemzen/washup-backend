@@ -6,13 +6,22 @@ import com.washup.app.database.hibernate.Id;
 import com.washup.app.database.hibernate.IdEntity;
 import com.washup.app.database.hibernate.TimestampEntity;
 import com.washup.app.users.DbUser;
+import com.washup.app.users.UserOperator;
+import com.washup.protos.Shared;
+import com.washup.protos.Shared.Order;
+import com.washup.protos.Shared.OrderStatus;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.ConstraintViolationException;
 import org.hibernate.Session;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -30,6 +39,12 @@ public class DbOrder extends TimestampEntity implements IdEntity {
 
   private String idempotenceToken;
 
+  @ManyToOne
+  @JoinColumn(name = "user_id", updatable = false, insertable = false)
+  @Fetch(FetchMode.SELECT)
+  private DbUser user;
+
+  @Column(name = "user_id", updatable = false, insertable = false, nullable = false)
   private Long userId;
 
   private String orderType;
@@ -44,6 +59,9 @@ public class DbOrder extends TimestampEntity implements IdEntity {
 
   @Type(type = "timestamp")
   private Date deliveryDate;
+
+  @Type(type = "timestamp")
+  private Date billedAt;
 
   private boolean rushService;
 
@@ -80,6 +98,15 @@ public class DbOrder extends TimestampEntity implements IdEntity {
     return new DateTime(deliveryDate);
   }
 
+  Date getBilledAt() {
+    return billedAt;
+  }
+
+  DbOrder setBilledAt(Date billedAt) {
+    this.billedAt = billedAt;
+    return this;
+  }
+
   long getTotalCostCents() {
     return totalCostCents;
   }
@@ -100,7 +127,22 @@ public class DbOrder extends TimestampEntity implements IdEntity {
     this.rushService = rushService;
   }
 
-  static DbOrder create(Session session, Id<DbUser> userId, String idempotentToken,
+  public Shared.Order toWire() {
+    return Order.newBuilder()
+        .setUserToken(user.getToken().getId())
+        .setToken(token)
+        .setStatus(OrderStatus.valueOf(status))
+        .setDeliveryDate(deliveryDate.getTime())
+        .setPickupDate(pickupDate.getTime())
+        .setBilledAt(billedAt != null ? billedAt.getTime() : 0)
+        .setRushService(rushService)
+        .setTotalCostCents(totalCostCents)
+        .setCreatedAt(getCreatedAt().getTime())
+        .setUpdatedAt(getUpdatedAt().getTime())
+        .build();
+  }
+
+  static DbOrder create(Session session, UserOperator user, String idempotentToken,
       String orderType, String status, DateTime deliveryDate,
       DateTime pickupDate) {
     checkState(deliveryDate.isAfter(pickupDate));
@@ -108,7 +150,8 @@ public class DbOrder extends TimestampEntity implements IdEntity {
     order.token = OrderToken.generate().getId();
     order.orderType = orderType;
     order.idempotenceToken = idempotentToken;
-    order.userId = userId.getId();
+    order.user = user.getUser();
+    order.userId = user.getId().getId();
     order.status = status;
     order.totalCostCents = 0L;
     order.pickupDate = pickupDate.toDate();

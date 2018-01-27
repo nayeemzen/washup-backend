@@ -30,6 +30,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
       throws IOException, ServletException {
     // Don't authorize if not hitting the api end point.
     if (!req.getServletPath().startsWith("/api/")) {
+      chain.doFilter(req, res);
       return;
     }
     String header = req.getHeader(HEADER_STRING);
@@ -38,8 +39,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
       return;
     }
 
-    UsernamePasswordAuthenticationToken authentication =
-        getAuthentication(req);
+    UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
     SecurityContextHolder.getContext().setAuthentication(authentication);
     chain.doFilter(req, res);
   }

@@ -3,6 +3,10 @@ Washup Application
 
 Backend for washup.io
 
+Protos
+===
+Run `mvn compile` after any changes to the proto to generate the java code.
+
 
 Signup
 ===

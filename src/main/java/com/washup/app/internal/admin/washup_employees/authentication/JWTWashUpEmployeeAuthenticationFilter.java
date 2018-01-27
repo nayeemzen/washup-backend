@@ -1,4 +1,4 @@
-package com.washup.app.washup_employees.authentication;
+package com.washup.app.internal.admin.washup_employees.authentication;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.washup.app.configuration.SecurityConstants.HEADER_STRING;

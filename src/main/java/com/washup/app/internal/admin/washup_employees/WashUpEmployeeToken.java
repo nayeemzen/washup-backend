@@ -1,4 +1,4 @@
-package com.washup.app.washup_employees;
+package com.washup.app.internal.admin.washup_employees;
 
 import static com.google.common.base.Preconditions.checkArgument;
 

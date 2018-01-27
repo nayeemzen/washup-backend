@@ -1,10 +1,9 @@
-package com.washup.app.washup_employees;
+package com.washup.app.internal.admin.washup_employees;
 
 import com.washup.app.database.hibernate.Id;
 import com.washup.app.database.hibernate.IdEntity;
 import com.washup.app.database.hibernate.StoreAsString;
 import com.washup.app.database.hibernate.TimestampEntity;
-import com.washup.app.users.UserToken;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;

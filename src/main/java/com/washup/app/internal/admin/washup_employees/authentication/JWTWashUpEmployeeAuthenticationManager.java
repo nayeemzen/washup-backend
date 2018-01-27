@@ -1,11 +1,11 @@
-package com.washup.app.washup_employees.authentication;
+package com.washup.app.internal.admin.washup_employees.authentication;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.washup.app.configuration.SecurityConstants.EXPIRATION_TIME;
 import static com.washup.app.configuration.SecurityConstants.WASHUP_EMPLOYEE_JWT_SECRET;
 
 import com.washup.app.database.hibernate.Transacter;
-import com.washup.app.washup_employees.WashUpEmployeeOperator;
+import com.washup.app.internal.admin.washup_employees.WashUpEmployeeOperator;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;

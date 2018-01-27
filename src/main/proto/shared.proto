@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package washup.protos.shared;
+
+option java_package = "com.washup.protos";
+
+enum OrderType {
+  WASH_FOLD = 0;
+  DRY_CLEAN = 1;
+}
+
+enum OrderStatus {
+  PENDING = 0;
+  PICKED_UP = 1;
+  DROPPED_OFF = 2;
+  BILLED = 3;
+}
+
+message Order {
+  string token = 1;
+  OrderType type = 2;
+  string userToken = 3;
+  OrderStatus status = 4;
+  uint64 pickupDate = 5;
+  uint64 deliveryDate = 6;
+  uint64 billedAt = 7;
+  bool rushService = 8;
+  int64 totalCostCents = 9;
+  uint64 createdAt = 10;
+  uint64 updatedAt = 11;
+}

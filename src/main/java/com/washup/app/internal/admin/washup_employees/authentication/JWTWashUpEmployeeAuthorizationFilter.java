@@ -1,4 +1,4 @@
-package com.washup.app.washup_employees.authentication;
+package com.washup.app.internal.admin.washup_employees.authentication;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.washup.app.configuration.SecurityConstants.HEADER_STRING;
@@ -6,7 +6,7 @@ import static com.washup.app.configuration.SecurityConstants.TOKEN_PREFIX;
 import static com.washup.app.configuration.SecurityConstants.WASHUP_EMPLOYEE_JWT_SECRET;
 
 import com.washup.app.database.hibernate.Transacter;
-import com.washup.app.washup_employees.WashUpEmployeeOperator;
+import com.washup.app.internal.admin.washup_employees.WashUpEmployeeOperator;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -42,6 +42,7 @@ public class JWTWashUpEmployeeAuthorizationFilter extends BasicAuthenticationFil
       throws IOException, ServletException {
     // Don't authorize as wash up employee if not hitting the _admin path
     if (!req.getServletPath().startsWith("/_admin/")) {
+      chain.doFilter(req, res);
       return;
     }
     String header = req.getHeader(HEADER_STRING);

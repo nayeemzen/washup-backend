@@ -1,4 +1,4 @@
-package com.washup.app.washup_employees;
+package com.washup.app.internal.admin.washup_employees;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
@@ -6,6 +6,7 @@ import static org.hibernate.criterion.Restrictions.eq;
 
 import com.google.common.base.Strings;
 import com.washup.app.database.hibernate.Id;
+import com.washup.app.internal.admin.washup_employees.authentication.WashUpEmployeeAuthenticationToken;
 import com.washup.app.users.DbUser;
 import javax.annotation.Nullable;
 import org.hibernate.Session;
@@ -85,12 +86,26 @@ public class WashUpEmployeeOperator {
           : null;
     }
 
+    public WashUpEmployeeOperator getWashUpEmployeeByEmail(Session session,
+        WashUpEmployeeToken employeeToken) {
+      DbWashUpEmployee dbWashUpEmployee =
+          (DbWashUpEmployee) session.createCriteria(DbWashUpEmployee.class)
+              .add(eq("token", employeeToken.getId()))
+              .uniqueResult();
+      return dbWashUpEmployee != null
+          ? new WashUpEmployeeOperator(session, dbWashUpEmployee)
+          : null;
+    }
+
     public WashUpEmployeeOperator getAuthenticatedEmployee(Session session,
         Authentication authentication) {
-      WashUpEmployeeOperator user = getWashUpEmployeeByEmail(session,
-          (String) authentication.getPrincipal());
-      checkState(user != null);
-      return user;
+      checkState(authentication instanceof WashUpEmployeeAuthenticationToken);
+      WashUpEmployeeAuthenticationToken authenticationToken =
+          (WashUpEmployeeAuthenticationToken) authentication;
+      WashUpEmployeeOperator employee = getWashUpEmployeeByEmail(session,
+          authenticationToken.getWashUpEmployeeToken());
+      checkState(employee != null);
+      return employee;
     }
   }
 }

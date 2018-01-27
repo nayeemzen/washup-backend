@@ -1,7 +1,7 @@
-package com.washup.app.washup_employees.authentication;
+package com.washup.app.internal.admin.washup_employees.authentication;
 
 import com.google.common.collect.ImmutableList;
-import com.washup.app.washup_employees.WashUpEmployeeToken;
+import com.washup.app.internal.admin.washup_employees.WashUpEmployeeToken;
 import javax.annotation.Nullable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 

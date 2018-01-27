@@ -4,6 +4,8 @@ package washup.protos.app;
 
 option java_package = "com.washup.protos";
 
+import "shared.proto";
+
 message Prices {
   string abc = 1;
 }
@@ -29,20 +31,8 @@ message LoginRequest {
 message LoginResponse {
 }
 
-enum OrderType {
-  WASH_FOLD = 0;
-  DRY_CLEAN = 1;
-}
-
-enum OrderStatus {
-  PENDING = 0;
-  PICKED_UP = 1;
-  DROPPED_OFF = 2;
-  BILLED = 3;
-}
-
 message PlaceOrderRequest {
-  OrderType order_type = 1;
+  washup.protos.shared.OrderType order_type = 1;
   uint64 pickup_date = 2;
   uint64 delivery_date = 3;
   string idempotence_token = 4;
