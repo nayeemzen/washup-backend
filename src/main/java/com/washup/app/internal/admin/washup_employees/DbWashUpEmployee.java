@@ -4,6 +4,7 @@ import com.washup.app.database.hibernate.Id;
 import com.washup.app.database.hibernate.IdEntity;
 import com.washup.app.database.hibernate.StoreAsString;
 import com.washup.app.database.hibernate.TimestampEntity;
+import com.washup.app.logging.Logger;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +17,7 @@ import org.hibernate.Session;
 @Entity(name = "washup_employees")
 @Table(name = "washup_employees")
 public class DbWashUpEmployee extends TimestampEntity implements IdEntity {
+  private final static Logger logger = Logger.getLogger(DbWashUpEmployee.class);
 
   @javax.persistence.Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,7 +84,7 @@ public class DbWashUpEmployee extends TimestampEntity implements IdEntity {
     try {
       session.save(washUpEmployee);
     } catch (ConstraintViolationException e) {
-      //LOG
+      logger.warn("Error creating employee record for [email=%s]. %s", email, e.getMessage());
       throw e;
     }
 

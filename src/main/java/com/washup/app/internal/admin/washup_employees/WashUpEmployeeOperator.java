@@ -86,7 +86,7 @@ public class WashUpEmployeeOperator {
           : null;
     }
 
-    public WashUpEmployeeOperator getWashUpEmployeeByEmail(Session session,
+    public WashUpEmployeeOperator getWashUpEmployeeByToken(Session session,
         WashUpEmployeeToken employeeToken) {
       DbWashUpEmployee dbWashUpEmployee =
           (DbWashUpEmployee) session.createCriteria(DbWashUpEmployee.class)
@@ -102,7 +102,7 @@ public class WashUpEmployeeOperator {
       checkState(authentication instanceof WashUpEmployeeAuthenticationToken);
       WashUpEmployeeAuthenticationToken authenticationToken =
           (WashUpEmployeeAuthenticationToken) authentication;
-      WashUpEmployeeOperator employee = getWashUpEmployeeByEmail(session,
+      WashUpEmployeeOperator employee = getWashUpEmployeeByToken(session,
           authenticationToken.getWashUpEmployeeToken());
       checkState(employee != null);
       return employee;

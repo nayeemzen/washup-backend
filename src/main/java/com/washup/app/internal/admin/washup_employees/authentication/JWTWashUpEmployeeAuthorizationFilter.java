@@ -7,6 +7,7 @@ import static com.washup.app.configuration.SecurityConstants.WASHUP_EMPLOYEE_JWT
 
 import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.internal.admin.washup_employees.WashUpEmployeeOperator;
+import com.washup.app.internal.admin.washup_employees.WashUpEmployeeToken;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -80,10 +81,10 @@ public class JWTWashUpEmployeeAuthorizationFilter extends BasicAuthenticationFil
         .getSubject();
     if (user != null) {
       return transacter.call(session -> {
-        WashUpEmployeeOperator washUpEmployeeByEmail = washUpEmployeeOperatorFactory
-            .getWashUpEmployeeByEmail(session, user);
-        checkState(washUpEmployeeByEmail != null);
-        return new WashUpEmployeeAuthenticationToken(user, washUpEmployeeByEmail.getToken());
+        WashUpEmployeeOperator washUpEmployee = washUpEmployeeOperatorFactory
+            .getWashUpEmployeeByToken(session, new WashUpEmployeeToken(user));
+        checkState(washUpEmployee != null);
+        return new WashUpEmployeeAuthenticationToken(user, washUpEmployee.getToken());
       });
     }
     return null;

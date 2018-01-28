@@ -3,6 +3,16 @@ Washup Application
 
 Backend for washup.io
 
+Build
+===
+Local build: mvn package
+
+Run
+===
+java -jar target/...jar
+or
+mvn spring-boot:run
+
 Protos
 ===
 Run `mvn compile` after any changes to the proto to generate the java code.
@@ -82,3 +92,20 @@ curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN
 GetPreference
 ====
 curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN" -X GET http://localhost:8080/api/v1/users/get-preferences
+
+
+
+Employees
+===
+
+Register Employees
+====
+java -jar target/...jar -register_employee email=abc@washup.io passsword=something first_name=john last_name=doe
+
+Login Employees
+====
+curl -i -H "Content-Type: application/json" -X POST -d '{"email": "ali@washup.io", "password":"123"}'  http://localhost:8080/_admin/login
+
+Get Orders
+===
+curl -i -H "Content-Type: application/json" -H "Authorization: Bearer EMPLOYEE_AUTH_TOKEN" -X GET -d '{"start_date":1, "end_date":2, "order_type": "WASH_FOLD", "billed": true}'  http://localhost:8080/_admin/orders/get-orders
