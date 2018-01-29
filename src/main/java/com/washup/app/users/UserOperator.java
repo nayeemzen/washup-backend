@@ -28,6 +28,10 @@ public class UserOperator {
     return user.getId();
   }
 
+  public DbUser getUser() {
+    return user;
+  }
+
   public String getEncodedPassword() {
     return user.getEncodedPassword();
   }

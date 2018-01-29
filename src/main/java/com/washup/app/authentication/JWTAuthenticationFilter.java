@@ -33,10 +33,6 @@ public class JWTAuthenticationFilter
   @Override
   public Authentication attemptAuthentication(HttpServletRequest req,
       HttpServletResponse res) throws AuthenticationException {
-    if (!req.getServletPath().contains("/api/v1/users/login")) {
-      return null;
-    }
-
     App.LoginRequest.Builder credentials = App.LoginRequest.newBuilder();
     try {
       JsonFormat.parser().merge(req.getReader(), credentials);

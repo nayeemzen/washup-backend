@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package washup.protos.app;
+
+option java_package = "com.washup.protos";
+
+import "shared.proto";
+
+message WashEmployeeLoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message WashEmployeeLoginResponse {
+}
+
+message GetOrdersRequest {
+  // both dates are inclusive [start_date, end_date]
+  uint64 start_date = 1;
+  uint64 end_date = 2;
+  shared.OrderType order_type = 3;
+  shared.OrderStatus order_status = 4;
+  bool billed = 5;
+}
+
+message GetOrderResponse {
+  repeated shared.Order orders = 1;
+}

@@ -1,18 +1,19 @@
 package com.washup.app.api.v1.orders;
 
+import static com.washup.app.api.v1.ApiConstants.API_URL;
+
 import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.exception.ParametersChecker;
 import com.washup.app.orders.OrderOperator;
 import com.washup.app.users.UserOperator;
 import com.washup.protos.App;
+import com.washup.protos.Shared;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import static com.washup.app.api.v1.ApiConstants.API_URL;
 
 @RestController
 @RequestMapping(OrderController.URL)
@@ -42,10 +43,10 @@ public class OrderController {
     transacter.execute(session -> {
       UserOperator user = userOperatorFactory.getAuthenticatedUser(session, authentication);
       orderOperatorFactory.create(session,
-          user.getId(),
+          user,
           request.getOrderType().name(),
           request.getIdempotenceToken(),
-          App.OrderStatus.PENDING.name(),
+          Shared.OrderStatus.PENDING.name(),
           request.getDeliveryDate(),
           request.getPickupDate());
     });
