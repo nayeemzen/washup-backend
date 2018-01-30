@@ -5,19 +5,20 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Strings;
 import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.internal.admin.washup_employees.WashUpEmployeeOperator;
-import com.washup.app.logging.Logger;
 import java.util.Properties;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
 public class WashUpCommandLine implements CommandLineRunner {
-  private final static Logger logger = Logger.getLogger(WashUpCommandLine.class);
+  private final static Logger logger = LoggerFactory.getLogger(WashUpCommandLine.class);
 
   private final static String REGISTER_EMPLOYEE_CMD = "register_employee";
   private final static Options options = getOptins();
@@ -52,7 +53,7 @@ public class WashUpCommandLine implements CommandLineRunner {
       transacter.execute(session -> {
         washupEmployeeOperator.create(session, firstName, lastName, email, password);
       });
-      logger.info("Created employee [firstName=%s][lastName=%s][email=%s]", firstName, lastName,
+      logger.info("Created employee [firstName={}][lastName={}][email={}]", firstName, lastName,
           email);
 
       // Quit after running the command line, if there was no command line, continue running the app
