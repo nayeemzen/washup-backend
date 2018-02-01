@@ -85,8 +85,7 @@ public class UserController {
   }
 
   @PostMapping("/set-profile")
-  public App.SetProfileResponse setProfile(
-      @RequestBody App.SetProfileRequest request,
+  public App.SetProfileResponse setProfile(@RequestBody App.SetProfileRequest request,
       Authentication authentication) {
     App.User user = request.getUser();
     ParametersChecker.check(user != null, "user is missing");

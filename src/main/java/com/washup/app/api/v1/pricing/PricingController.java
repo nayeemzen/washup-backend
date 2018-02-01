@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(PricingController.URL)
 public class PricingController {
 
-  static final String URL = API_URL + "/users";
+  static final String URL = API_URL + "/pricing";
 
   @Autowired
   Transacter transacter;
 
-  @RequestMapping("/prices")
+  @RequestMapping("/")
   public App.Prices prices() {
-    throw new BadRequestException("a");
+    throw new UnsupportedOperationException();
   }
 }

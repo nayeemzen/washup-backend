@@ -40,7 +40,7 @@ public class DbOrder extends TimestampEntity implements IdEntity {
   private String idempotenceToken;
 
   @ManyToOne
-  @JoinColumn(name = "user_id", updatable = false, insertable = false)
+  @JoinColumn(name = "user_id")
   @Fetch(FetchMode.SELECT)
   private DbUser user;
 
