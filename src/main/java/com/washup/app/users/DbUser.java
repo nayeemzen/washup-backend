@@ -86,6 +86,7 @@ public class DbUser extends TimestampEntity implements IdEntity {
         .setFirstName(firstName)
         .setLastName(lastName)
         .setPhoneNumber(phoneNumber)
+        .setEmail(email)
         .build();
   }
 
