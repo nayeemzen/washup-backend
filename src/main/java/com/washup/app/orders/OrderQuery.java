@@ -1,6 +1,8 @@
 package com.washup.app.orders;
 
 import com.washup.app.database.hibernate.AbstractQuery;
+import com.washup.app.database.hibernate.Id;
+import com.washup.app.users.DbUser;
 import com.washup.protos.Shared.OrderStatus;
 import com.washup.protos.Shared.OrderType;
 import org.hibernate.Session;
@@ -11,6 +13,11 @@ import org.springframework.stereotype.Component;
 public class OrderQuery extends AbstractQuery<DbOrder, OrderQuery, OrderOperator> {
   private OrderQuery(Session session) {
     super(session, DbOrder.class, OrderOperator.class);
+  }
+
+  public OrderQuery userId(Id<DbUser> userId) {
+    criteria.add(Restrictions.eq("userId", userId.getId()));
+    return this;
   }
 
   public OrderQuery orderType(OrderType type) {

@@ -19,13 +19,13 @@ enum OrderStatus {
 message Order {
   string token = 1;
   OrderType type = 2;
-  string userToken = 3;
+  string user_token = 3;
   OrderStatus status = 4;
-  uint64 pickupDate = 5;
-  uint64 deliveryDate = 6;
-  uint64 billedAt = 7;
-  bool rushService = 8;
-  int64 totalCostCents = 9;
-  uint64 createdAt = 10;
-  uint64 updatedAt = 11;
+  uint64 pickup_date = 5;
+  uint64 delivery_date = 6;
+  uint64 billed_at = 7;
+  bool rush_service = 8;
+  int64 total_cost_cents = 9;
+  uint64 created_at = 10;
+  uint64 updated_at = 11;
 }

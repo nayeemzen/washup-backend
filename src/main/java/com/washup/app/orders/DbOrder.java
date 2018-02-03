@@ -10,6 +10,7 @@ import com.washup.app.users.UserOperator;
 import com.washup.protos.Shared;
 import com.washup.protos.Shared.Order;
 import com.washup.protos.Shared.OrderStatus;
+import com.washup.protos.Shared.OrderType;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -132,6 +133,7 @@ public class DbOrder extends TimestampEntity implements IdEntity {
         .setUserToken(user.getToken().getId())
         .setToken(token)
         .setStatus(OrderStatus.valueOf(status))
+        .setType(OrderType.valueOf(orderType))
         .setDeliveryDate(deliveryDate.getTime())
         .setPickupDate(pickupDate.getTime())
         .setBilledAt(billedAt != null ? billedAt.getTime() : 0)
@@ -155,7 +157,7 @@ public class DbOrder extends TimestampEntity implements IdEntity {
     order.status = status;
     order.totalCostCents = 0L;
     order.pickupDate = pickupDate.toDate();
-    order.deliveryDate = pickupDate.toDate();
+    order.deliveryDate = deliveryDate.toDate();
     Days days = Days.daysBetween(pickupDate, deliveryDate);
     order.rushService = days == Days.ONE || days == Days.ZERO;
 

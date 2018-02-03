@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package washup.protos.app;
+package washup.protos.internal;
 
 option java_package = "com.washup.protos";
 

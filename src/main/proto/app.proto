@@ -41,6 +41,13 @@ message PlaceOrderRequest {
 message PlaceOrderResponse{
 }
 
+message GetOrdersRequest {
+}
+
+message GetOrdersResponse {
+  repeated washup.protos.shared.Order orders = 1;
+}
+
 message Address {
   string street_address = 1;
   string apt = 2;
