@@ -1,6 +1,5 @@
 package com.washup.app.spring;
 
-import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter.X_PROTOBUF_MESSAGE_HEADER;
 import static org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter.X_PROTOBUF_SCHEMA_HEADER;
 
@@ -9,11 +8,9 @@ import com.google.protobuf.Message;
 import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.Printer;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.List;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -40,7 +37,7 @@ public class ProtobufHttpMessageConverter extends AbstractHttpMessageConverter<M
       throws IOException, HttpMessageNotReadableException {
     MediaType contentType = inputMessage.getHeaders().getContentType();
     if (contentType == null) {
-      contentType = MediaType.APPLICATION_JSON;
+      contentType = PROTOBUF;
     }
 
     try {
@@ -65,25 +62,23 @@ public class ProtobufHttpMessageConverter extends AbstractHttpMessageConverter<M
   @Override
   protected void writeInternal(Message message, HttpOutputMessage outputMessage)
       throws IOException, HttpMessageNotWritableException {
-    List<MediaType> acceptedMediaTypes = outputMessage.getHeaders().getAccept();
-    MediaType acceptedMediaType = getOnlyElement(acceptedMediaTypes, MediaType.APPLICATION_JSON);
+    MediaType contentType = outputMessage.getHeaders().getContentType();
+    if (contentType == null) {
+      contentType = PROTOBUF;
+    }
 
     try {
-      if (acceptedMediaType.isCompatibleWith(MediaType.APPLICATION_JSON)) {
+      if (contentType.isCompatibleWith(MediaType.APPLICATION_JSON)) {
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputMessage.getBody(),
             Charsets.UTF_8);
         outputStreamWriter.write(jsonPrinter.print(message));
         outputStreamWriter.flush();
-      } else if (acceptedMediaType.isCompatibleWith(PROTOBUF)) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        byteArrayOutputStream.write(message.toByteArray());
-        byteArrayOutputStream.writeTo(outputMessage.getBody());
-        byteArrayOutputStream.flush();
+      } else if (contentType.isCompatibleWith(PROTOBUF)) {
         setProtoHeader(outputMessage, message);
+        outputMessage.getBody().write(message.toByteArray());
       } else {
-        throw new UnsupportedOperationException(acceptedMediaType + " is not supported.");
+        throw new UnsupportedOperationException(contentType + " is not supported.");
       }
-
     } catch (Throwable t) {
       throw new HttpMessageNotWritableException("Could not write protobuf message: " + t.getMessage());
     }
