@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.hibernate.criterion.Restrictions.eq;
 
 import com.google.common.base.Strings;
+import com.washup.app.database.hibernate.AbstractOperator;
 import com.washup.app.database.hibernate.Id;
 import com.washup.protos.App;
 import javax.annotation.Nullable;
@@ -14,53 +15,48 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-public class UserOperator {
-
-  private final Session session;
-  private final DbUser user;
-
+public class UserOperator extends AbstractOperator<DbUser> {
   public UserOperator(Session session, DbUser user) {
-    this.session = session;
-    this.user = user;
+    super(session, user);
   }
 
   public Id<DbUser> getId() {
-    return user.getId();
+    return entity.getId();
   }
 
   public DbUser getUser() {
-    return user;
+    return entity;
   }
 
   public String getEncodedPassword() {
-    return user.getEncodedPassword();
+    return entity.getEncodedPassword();
   }
 
   public UserOperator setFirstName(String firstName) {
     checkArgument(!Strings.isNullOrEmpty(firstName));
-    user.setFirstName(firstName);
+    entity.setFirstName(firstName);
     return this;
   }
 
   public UserOperator setLastName(String lastName) {
     checkArgument(!Strings.isNullOrEmpty(lastName));
-    user.setLastName(lastName);
+    entity.setLastName(lastName);
     return this;
   }
 
   public UserOperator setPhoneNumber(String phoneNumber) {
     checkArgument(!Strings.isNullOrEmpty(phoneNumber));
-    user.setPhoneNumber(phoneNumber);
+    entity.setPhoneNumber(phoneNumber);
     return this;
   }
 
   public UserOperator update() {
-    session.update(user);
+    session.update(entity);
     return this;
   }
 
   public App.User toProto() {
-    return user.toProto();
+    return entity.toProto();
   }
 
   @Component

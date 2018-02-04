@@ -1,23 +1,26 @@
 package com.washup.app.api.v1.users;
 
+import static com.washup.app.api.v1.ApiConstants.API_URL;
+import static com.washup.app.configuration.SecurityConstants.HEADER_STRING;
+import static com.washup.app.configuration.SecurityConstants.TOKEN_PREFIX;
+
 import com.google.common.base.Strings;
-import com.google.gson.JsonObject;
-import com.google.protobuf.util.JsonFormat;
 import com.washup.app.authentication.JWTAuthenticationManager;
 import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.exception.ParametersChecker;
 import com.washup.app.users.UserOperator;
 import com.washup.protos.App;
+import com.washup.protos.App.SignUpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
-
-import static com.washup.app.api.v1.ApiConstants.API_URL;
-import static com.washup.app.configuration.SecurityConstants.HEADER_STRING;
-import static com.washup.app.configuration.SecurityConstants.TOKEN_PREFIX;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(UserController.URL)
@@ -32,7 +35,7 @@ public class UserController {
   UserOperator.Factory userOperatorFactory;
 
   @PostMapping("/sign-up")
-  public ResponseEntity<String> signUp(
+  public ResponseEntity<SignUpResponse> signUp(
       @RequestBody App.SignUpRequest request) {
     ParametersChecker.check(!Strings.isNullOrEmpty(request.getFirstName()),
         "first_name is missing");
@@ -45,7 +48,7 @@ public class UserController {
     ParametersChecker.check(!Strings.isNullOrEmpty(request.getPhoneNumber()),
         "phone_number is missing");
 
-    ResponseEntity<String> response = transacter.call(session -> {
+    ResponseEntity<SignUpResponse> response = transacter.call(session -> {
       UserOperator userOperator = userOperatorFactory.getUserByEmail(session,
           request.getEmail());
       // If user already exists, throw.
@@ -55,9 +58,7 @@ public class UserController {
                 .setAlreadyExists(true)
                 .build();
         try {
-          return new ResponseEntity<>(
-              JsonFormat.printer().print(alreadyExistResponse),
-              HttpStatus.OK);
+          return new ResponseEntity<>(alreadyExistResponse, HttpStatus.OK);
         } catch (Exception e) {
           throw new RuntimeException(e);
         }
@@ -81,7 +82,8 @@ public class UserController {
     String jwtToken = JWTAuthenticationManager.getJwtToken(request.getEmail());
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.set(HEADER_STRING, TOKEN_PREFIX + jwtToken);
-    return new ResponseEntity<>("", responseHeaders, HttpStatus.CREATED);
+    return new ResponseEntity<>(SignUpResponse.newBuilder().build(), responseHeaders,
+        HttpStatus.CREATED);
   }
 
   @PostMapping("/set-profile")

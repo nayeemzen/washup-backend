@@ -24,7 +24,7 @@ public abstract class AbstractQuery<T, R extends AbstractQuery, S extends Abstra
     }
   }
 
-  private R orderDesc(String propertyName) {
+  public R orderDesc(String propertyName) {
     criteria.addOrder(Order.desc(propertyName));
     return (R) this;
   }

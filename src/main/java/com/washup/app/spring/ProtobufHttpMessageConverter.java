@@ -1,5 +1,7 @@
 package com.washup.app.spring;
 
+import static com.google.common.collect.Iterables.getFirst;
+import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter.X_PROTOBUF_MESSAGE_HEADER;
 import static org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter.X_PROTOBUF_SCHEMA_HEADER;
 
@@ -66,6 +68,8 @@ public class ProtobufHttpMessageConverter extends AbstractHttpMessageConverter<M
     if (contentType == null) {
       contentType = PROTOBUF;
     }
+    List<MediaType> acceptedMediaTypes = outputMessage.getHeaders().getAccept();
+    MediaType acceptedMediaType = getFirst(acceptedMediaTypes, MediaType.APPLICATION_JSON);
 
     try {
       if (contentType.isCompatibleWith(MediaType.APPLICATION_JSON)) {
