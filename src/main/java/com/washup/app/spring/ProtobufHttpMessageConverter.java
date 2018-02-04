@@ -40,7 +40,7 @@ public class ProtobufHttpMessageConverter extends AbstractHttpMessageConverter<M
       throws IOException, HttpMessageNotReadableException {
     MediaType contentType = inputMessage.getHeaders().getContentType();
     if (contentType == null) {
-      contentType = MediaType.APPLICATION_JSON;
+      contentType = PROTOBUF;
     }
 
     try {
@@ -65,25 +65,23 @@ public class ProtobufHttpMessageConverter extends AbstractHttpMessageConverter<M
   @Override
   protected void writeInternal(Message message, HttpOutputMessage outputMessage)
       throws IOException, HttpMessageNotWritableException {
-    List<MediaType> acceptedMediaTypes = outputMessage.getHeaders().getAccept();
-    MediaType acceptedMediaType = getOnlyElement(acceptedMediaTypes, MediaType.APPLICATION_JSON);
+    MediaType contentType = outputMessage.getHeaders().getContentType();
+    if (contentType == null) {
+      contentType = PROTOBUF;
+    }
 
     try {
-      if (acceptedMediaType.isCompatibleWith(MediaType.APPLICATION_JSON)) {
+      if (contentType.isCompatibleWith(MediaType.APPLICATION_JSON)) {
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputMessage.getBody(),
             Charsets.UTF_8);
         outputStreamWriter.write(jsonPrinter.print(message));
         outputStreamWriter.flush();
-      } else if (acceptedMediaType.isCompatibleWith(PROTOBUF)) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        byteArrayOutputStream.write(message.toByteArray());
-        byteArrayOutputStream.writeTo(outputMessage.getBody());
-        byteArrayOutputStream.flush();
+      } else if (contentType.isCompatibleWith(PROTOBUF)) {
         setProtoHeader(outputMessage, message);
+        outputMessage.getBody().write(message.toByteArray());
       } else {
-        throw new UnsupportedOperationException(acceptedMediaType + " is not supported.");
+        throw new UnsupportedOperationException(contentType + " is not supported.");
       }
-
     } catch (Throwable t) {
       throw new HttpMessageNotWritableException("Could not write protobuf message: " + t.getMessage());
     }

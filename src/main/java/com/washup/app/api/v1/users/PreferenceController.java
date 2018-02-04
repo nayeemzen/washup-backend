@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(PreferenceController.URL)
 public class PreferenceController {
 
-  static final String URL = API_URL + "/users";
+  static final String URL = API_URL + "/preferences";
 
   @Autowired
   Transacter transacter;
