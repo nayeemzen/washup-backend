@@ -6,6 +6,7 @@ import com.washup.app.database.hibernate.Id;
 import com.washup.app.database.hibernate.Transacter;
 import com.washup.protos.Shared.OrderStatus;
 import com.washup.protos.Shared.OrderType;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
@@ -51,6 +52,14 @@ public class OrderTester {
 
   public OrderToken getOrderToken() {
     return transacter.call(session -> load(session).getToken());
+  }
+
+  public Date getCreatedAt() {
+    return transacter.call(session -> load(session).getCreatedAt());
+  }
+
+  public Date getUpdateAt() {
+    return transacter.call(session -> load(session).getUpdatedAt());
   }
 
   private DbOrder load(Session session) {

@@ -72,7 +72,7 @@ public class OrderController {
       UserOperator user = userOperatorFactory.getAuthenticatedUser(session, authentication);
       List<OrderOperator> orderOperators = orderQueryFactory.get(session)
           .userId(user.getId())
-          .orderDesc("createdAt")
+          .orderDesc("id")
           .list();
       return orderOperators.stream().map(OrderOperator::toWire).collect(toList());
     });

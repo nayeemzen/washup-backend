@@ -20,6 +20,10 @@ public class Token extends AbstractIdentifier<String> {
     return generateToken(CHARS, length);
   }
 
+  public static String generateToken() {
+    return generateToken(8);
+  }
+
   protected static String generateToken(char[] chars, int length) {
     return RandomStringUtils.random(length, 0, chars.length, false, false,
         chars, secureRandom);

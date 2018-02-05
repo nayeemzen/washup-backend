@@ -5,6 +5,7 @@ import static com.washup.app.configuration.SecurityConstants.HEADER_STRING;
 import static com.washup.app.configuration.SecurityConstants.TOKEN_PREFIX;
 
 import com.google.protobuf.Message;
+import com.washup.app.spring.ProtobufHttpMessageConverter;
 import com.washup.protos.App;
 import com.washup.protos.App.LoginRequest;
 import java.io.IOException;
@@ -20,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpInputMessage;
-import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

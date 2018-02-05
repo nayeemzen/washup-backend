@@ -1,24 +1,17 @@
 package com.washup.app;
 
-import com.washup.app.AppTester.Factory;
+import com.google.protobuf.util.JsonFormat;
+import com.washup.app.spring.ProtobufHttpMessageConverter;
 import java.time.Clock;
 import java.util.Arrays;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 @TestConfiguration
 @PropertySource("application-development.properties")
 public class WashUpTestConfig {
-
-//  @Bean
-//  public AppTester.Factory get(@Autowired TestRestTemplate testRestTemplate){
-//    return new Factory(testRestTemplate);
-//  }
 
   @Bean
   RestTemplate restTemplate(ProtobufHttpMessageConverter hmc) {
@@ -26,12 +19,14 @@ public class WashUpTestConfig {
   }
 
   @Bean
-  ProtobufHttpMessageConverter protobufHttpMessageConverter() {
-    return new ProtobufHttpMessageConverter();
+  Clock clock() {
+    return Clock.systemUTC();
   }
 
   @Bean
-  Clock clock() {
-    return Clock.systemUTC();
+  ProtobufHttpMessageConverter protobufHttpMessageConverter() {
+    return new ProtobufHttpMessageConverter(JsonFormat.printer()
+        .includingDefaultValueFields()
+        .preservingProtoFieldNames());
   }
 }
