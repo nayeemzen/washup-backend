@@ -32,6 +32,10 @@ public class ProtobufHttpMessageConverter extends AbstractHttpMessageConverter<M
     return Message.class.isAssignableFrom(clazz);
   }
 
+  protected MediaType getDefaultContentType(Message message) throws IOException {
+    return PROTOBUF;
+  }
+
   @Override
   protected Message readInternal(Class<? extends Message> clazz, HttpInputMessage inputMessage)
       throws IOException, HttpMessageNotReadableException {
