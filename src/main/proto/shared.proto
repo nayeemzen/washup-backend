@@ -17,3 +17,7 @@ enum OrderStatus {
   DROPPED_OFF = 3;
   BILLED = 4;
 }
+
+message Error {
+  map<string, string> fields = 1;
+}

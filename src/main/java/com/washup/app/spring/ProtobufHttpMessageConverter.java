@@ -11,6 +11,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Method;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -20,6 +22,8 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 
 public class ProtobufHttpMessageConverter extends AbstractHttpMessageConverter<Message> {
   public static final MediaType PROTOBUF = new MediaType("application", "x-protobuf", Charsets.UTF_8);
+  private static final ConcurrentHashMap<Class<?>, Method> methodCache =
+      new ConcurrentHashMap<Class<?>, Method>();
   private final Printer jsonPrinter;
 
   public ProtobufHttpMessageConverter(Printer jsonPrinter) {
@@ -45,7 +49,7 @@ public class ProtobufHttpMessageConverter extends AbstractHttpMessageConverter<M
     }
 
     try {
-      Message.Builder builder = (Message.Builder) clazz.getMethod("newBuilder").invoke(clazz);
+      Message.Builder builder = (Message.Builder) getNewBuilder(clazz).invoke(clazz);
       if (MediaType.APPLICATION_JSON.isCompatibleWith(contentType)) {
         BufferedReader bufferedReader = new BufferedReader(
             new InputStreamReader(inputMessage.getBody(), Charsets.UTF_8));
@@ -61,6 +65,16 @@ public class ProtobufHttpMessageConverter extends AbstractHttpMessageConverter<M
     } catch (Throwable t) {
       throw new HttpMessageNotReadableException("Could not read protobuf message: " + t.getMessage());
     }
+  }
+
+  private Method getNewBuilder(Class<? extends Message> clazz) throws NoSuchMethodException {
+    Method newBuilder = methodCache.get(clazz);
+    if (newBuilder == null) {
+      newBuilder = clazz.getMethod("newBuilder");
+      methodCache.put(clazz, newBuilder);
+    }
+
+    return newBuilder;
   }
 
   @Override
