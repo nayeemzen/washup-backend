@@ -12,5 +12,6 @@ CREATE TABLE `orders` (
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY `unq_token` (`token`),
+  UNIQUE KEY `unq_idempotence_token` (`idempotence_token`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

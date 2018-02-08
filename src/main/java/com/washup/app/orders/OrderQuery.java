@@ -20,6 +20,11 @@ public class OrderQuery extends AbstractQuery<DbOrder, OrderQuery, OrderOperator
     return this;
   }
 
+  public OrderQuery token(OrderToken token) {
+    criteria.add(Restrictions.eq("token", token.getId()));
+    return this;
+  }
+
   public OrderQuery orderType(OrderType type) {
     criteria.add(Restrictions.eq("orderType", type.name()));
     return this;

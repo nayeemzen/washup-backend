@@ -38,14 +38,27 @@ message PlaceOrderRequest {
   string idempotence_token = 4;
 }
 
+
+message Order {
+  string token = 1;
+  shared.OrderType order_type = 2;
+  shared.OrderStatus status = 3;
+  uint64 pickup_date = 4;
+  uint64 delivery_date = 5;
+  uint64 billed_at = 6;
+  bool rush_service = 7;
+  int64 total_cost_cents = 8;
+}
+
 message PlaceOrderResponse{
+  Order order = 1;
 }
 
 message GetOrdersRequest {
 }
 
 message GetOrdersResponse {
-  repeated washup.protos.shared.Order orders = 1;
+  repeated Order orders = 1;
 }
 
 message Address {

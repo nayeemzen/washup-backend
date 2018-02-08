@@ -1,13 +1,14 @@
 package com.washup.app.orders;
 
 import static org.hibernate.criterion.Restrictions.eq;
-import static org.hibernate.criterion.Restrictions.or;
 
 import com.washup.app.database.hibernate.AbstractOperator;
 import com.washup.app.database.hibernate.Id;
-import com.washup.app.users.DbUser;
 import com.washup.app.users.UserOperator;
-import com.washup.protos.Shared;
+import com.washup.protos.Admin.OrderInternal;
+import com.washup.protos.App.Order;
+import com.washup.protos.Shared.OrderStatus;
+import com.washup.protos.Shared.OrderType;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -20,7 +21,15 @@ public class OrderOperator extends AbstractOperator<DbOrder> {
     super(session, order);
   }
 
-  public Shared.Order toWire() {
+  public Id<DbOrder> getId() {
+    return entity.getId();
+  }
+
+  public OrderInternal toInternal() {
+    return entity.toInternal();
+  }
+
+  public Order toWire() {
     return entity.toWire();
   }
 
@@ -29,8 +38,8 @@ public class OrderOperator extends AbstractOperator<DbOrder> {
 
     @Autowired OrderQuery.Factory orderQueryFactory;
 
-    public OrderOperator create(Session session, UserOperator user, String orderType,
-        String idempotenceToken, String status, long deliveryDate,
+    public OrderOperator create(Session session, UserOperator user, OrderType orderType,
+        String idempotenceToken, OrderStatus status, long deliveryDate,
         long pickupDate) {
       DateTime deliveryDateUtc = new DateTime(deliveryDate, DateTimeZone.UTC);
       DateTime pickupDateUtc = new DateTime(pickupDate, DateTimeZone.UTC);

@@ -14,7 +14,21 @@ message WashEmployeeLoginRequest {
 message WashEmployeeLoginResponse {
 }
 
-message GetOrdersRequest {
+message OrderInternal {
+  string token = 1;
+  shared.OrderType order_type = 2;
+  string user_token = 3;
+  shared.OrderStatus status = 4;
+  uint64 pickup_date = 5;
+  uint64 delivery_date = 6;
+  uint64 billed_at = 7;
+  bool rush_service = 8;
+  int64 total_cost_cents = 9;
+  uint64 created_at = 10;
+  uint64 updated_at = 11;
+}
+
+message GetOrdersRequestInternal {
   // both dates are inclusive [start_date, end_date]
   uint64 start_date = 1;
   uint64 end_date = 2;
@@ -23,6 +37,6 @@ message GetOrdersRequest {
   bool billed = 5;
 }
 
-message GetOrderResponse {
-  repeated shared.Order orders = 1;
+message GetOrderResponseInternal {
+  repeated OrderInternal orders = 1;
 }

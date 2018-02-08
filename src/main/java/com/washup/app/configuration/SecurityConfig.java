@@ -4,11 +4,12 @@ import com.washup.app.authentication.JWTAuthenticationFilter;
 import com.washup.app.authentication.JWTAuthenticationManager;
 import com.washup.app.authentication.JWTAuthorizationFilter;
 import com.washup.app.database.hibernate.Transacter;
-import com.washup.app.users.UserOperator;
 import com.washup.app.internal.admin.washup_employees.WashUpEmployeeOperator;
 import com.washup.app.internal.admin.washup_employees.authentication.JWTWashUpEmployeeAuthenticationFilter;
 import com.washup.app.internal.admin.washup_employees.authentication.JWTWashUpEmployeeAuthenticationManager;
 import com.washup.app.internal.admin.washup_employees.authentication.JWTWashUpEmployeeAuthorizationFilter;
+import com.washup.app.spring.ProtobufHttpMessageConverter;
+import com.washup.app.users.UserOperator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -37,6 +38,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Autowired
   WashUpEmployeeOperator.Factory washUpEmployeeOperatorFactory;
 
+  @Autowired
+  ProtobufHttpMessageConverter messageConverter;
+
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     JWTAuthenticationManager authenticationManager =
@@ -50,11 +54,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .authenticated()
         .and()
         // User Authentication Filters
-        .addFilterBefore(new JWTAuthenticationFilter(authenticationManager),
+        .addFilterBefore(new JWTAuthenticationFilter(authenticationManager, messageConverter),
             BasicAuthenticationFilter.class)
         .addFilter(new JWTAuthorizationFilter(authenticationManager))
         // Wash Up Employee Authentication Filters
-        .addFilterAfter(new JWTWashUpEmployeeAuthenticationFilter(washUpEmployeeAuthManager),
+        .addFilterAfter(new JWTWashUpEmployeeAuthenticationFilter(washUpEmployeeAuthManager,
+                messageConverter),
             JWTAuthorizationFilter.class)
         .addFilter(new JWTWashUpEmployeeAuthorizationFilter(washUpEmployeeAuthManager,
             washUpEmployeeOperatorFactory, transacter))

@@ -5,27 +5,15 @@ package washup.protos.shared;
 option java_package = "com.washup.protos";
 
 enum OrderType {
-  WASH_FOLD = 0;
-  DRY_CLEAN = 1;
+  TYPE_UNKNOWN = 0;
+  WASH_FOLD = 1;
+  DRY_CLEAN = 2;
 }
 
 enum OrderStatus {
-  PENDING = 0;
-  PICKED_UP = 1;
-  DROPPED_OFF = 2;
-  BILLED = 3;
-}
-
-message Order {
-  string token = 1;
-  OrderType type = 2;
-  string user_token = 3;
-  OrderStatus status = 4;
-  uint64 pickup_date = 5;
-  uint64 delivery_date = 6;
-  uint64 billed_at = 7;
-  bool rush_service = 8;
-  int64 total_cost_cents = 9;
-  uint64 created_at = 10;
-  uint64 updated_at = 11;
+  STATUS_UNKNOWN = 0;
+  PENDING = 1;
+  PICKED_UP = 2;
+  DROPPED_OFF = 3;
+  BILLED = 4;
 }

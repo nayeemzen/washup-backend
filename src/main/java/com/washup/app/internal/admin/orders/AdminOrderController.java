@@ -6,14 +6,17 @@ import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.exception.ParametersChecker;
 import com.washup.app.internal.admin.washup_employees.WashUpEmployeeOperator;
 import com.washup.app.orders.OrderQuery;
-import com.washup.protos.Internal;
-import com.washup.protos.Shared.Order;
+import com.washup.protos.Admin.GetOrderResponseInternal;
+import com.washup.protos.Admin.GetOrdersRequestInternal;
+import com.washup.protos.Admin.OrderInternal;
+import com.washup.protos.Shared.OrderStatus;
+import com.washup.protos.Shared.OrderType;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,10 +36,10 @@ public class AdminOrderController {
   @Autowired
   WashUpEmployeeOperator.Factory washUpEmployeeOperatorFactory;
 
-  @GetMapping("/get-orders")
-  public Internal.GetOrderResponse getOrders(@RequestBody Internal.GetOrdersRequest request,
+  @PostMapping("/get-orders-internal")
+  public GetOrderResponseInternal getOrdersInternal(@RequestBody GetOrdersRequestInternal request,
       Authentication authentication) {
-    List<Order> orders = transacter.call(session -> {
+    List<OrderInternal> orders = transacter.call(session -> {
       WashUpEmployeeOperator authenticatedEmployee = washUpEmployeeOperatorFactory
           .getAuthenticatedEmployee(session, authentication);
       ParametersChecker.check(
@@ -47,18 +50,20 @@ public class AdminOrderController {
       OrderQuery orderQuery = orderQueryFactory.get(session);
       orderQuery.isBilled(request.getBilled());
       orderQuery.ordersBetween(startDate, endDate);
-      if (request.getOrderStatus() != null) {
+      if (request.getOrderStatus() != OrderStatus.STATUS_UNKNOWN) {
         orderQuery.orderStatus(request.getOrderStatus());
       }
-      if (request.getOrderType() != null) {
+      if (request.getOrderType() != OrderType.TYPE_UNKNOWN) {
         orderQuery.orderType(request.getOrderType());
       }
-      return orderQuery.list().stream()
-          .map(o -> o.toWire())
+      return orderQuery.orderAsc("id")
+          .list()
+          .stream()
+          .map(o -> o.toInternal())
           .collect(Collectors.toList());
     });
 
-    return Internal.GetOrderResponse.newBuilder()
+    return GetOrderResponseInternal.newBuilder()
         .addAllOrders(orders)
         .build();
   }
