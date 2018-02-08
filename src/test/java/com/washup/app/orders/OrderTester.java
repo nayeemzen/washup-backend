@@ -92,5 +92,15 @@ public class OrderTester {
             .map(m -> new OrderTester(this, m.getId()))
             .collect(Collectors.toList()));
     }
+
+    public OrderTester get(OrderToken orderToken) {
+      return transacter.call(session -> {
+        Id<DbOrder> orderId = orderQueryFactory.get(session)
+            .token(orderToken)
+            .uniqueResult()
+            .getId();
+        return new OrderTester(this, orderId);
+      });
+    }
   }
 }

@@ -10,10 +10,10 @@ import com.washup.app.orders.OrderTester;
 import com.washup.app.spring.DateUtils;
 import com.washup.app.tokens.Token;
 import com.washup.protos.App.GetOrdersRequest;
+import com.washup.protos.App.GetOrdersResponse;
+import com.washup.protos.App.Order;
 import com.washup.protos.App.PlaceOrderRequest;
 import com.washup.protos.App.PlaceOrderResponse;
-import com.washup.protos.Internal.GetOrderResponse;
-import com.washup.protos.Shared.Order;
 import com.washup.protos.Shared.OrderStatus;
 import com.washup.protos.Shared.OrderType;
 import java.time.Clock;
@@ -93,28 +93,23 @@ public class OrderTest extends AbstractTest {
         .setDeliveryDate(dryCleanDeliveryDate.getMillis())
         .build());
 
-    GetOrderResponse order = markApp.getOrder(GetOrdersRequest.newBuilder().build());
+    GetOrdersResponse order = markApp.getOrder(GetOrdersRequest.newBuilder().build());
     List<OrderTester> orderTester = orderTesterFactory.all();
-    assertThat(order.getOrdersList()).isEqualTo(ImmutableList.of(
+    List<Order> ordersList = order.getOrdersList();
+    assertThat(ordersList).isEqualTo(ImmutableList.of(
         Order.newBuilder()
-            .setUserToken(markApp.userTester().getToken().getId())
             .setPickupDate(DateUtils.roundedMillis(dryCleanPickUpDate))
             .setDeliveryDate(DateUtils.roundedMillis(dryCleanDeliveryDate))
             .setStatus(OrderStatus.PENDING)
             .setOrderType(OrderType.DRY_CLEAN)
-            .setCreatedAt(orderTester.get(0).getCreatedAt().toInstant().toEpochMilli())
-            .setUpdatedAt(orderTester.get(0).getUpdateAt().toInstant().toEpochMilli())
             .setToken(orderTester.get(0).getOrderToken().getId())
             .build(),
         Order.newBuilder()
-            .setUserToken(markApp.userTester().getToken().getId())
             .setRushService(true)
             .setPickupDate(DateUtils.roundedMillis(currentDateTime))
             .setDeliveryDate(DateUtils.roundedMillis(deliveryDate))
             .setStatus(OrderStatus.PENDING)
             .setOrderType(OrderType.WASH_FOLD)
-            .setCreatedAt(orderTester.get(1).getCreatedAt().toInstant().toEpochMilli())
-            .setUpdatedAt(orderTester.get(1).getUpdateAt().toInstant().toEpochMilli())
             .setToken(orderTester.get(1).getOrderToken().getId())
             .build()));
   }

@@ -100,7 +100,7 @@ Employees
 
 Register Employees
 ====
-java -jar target/...jar -register_employee email=abc@washup.io passsword=something first_name=john last_name=doe
+java -jar target/...jar -register_employee email=abc@washup.io password=something first_name=john last_name=doe
 
 Login Employees
 ====

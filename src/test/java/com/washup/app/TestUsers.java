@@ -7,4 +7,11 @@ public class TestUsers {
       .setEmail("mark.cuban@gmail.com")
       .setPhoneNumber("4158801111")
       .build();
+
+  public final static TestUser THOMAS = new TestUser.Builder()
+      .setFirstName("Thomas")
+      .setLastName("Lee")
+      .setEmail("thomas.lee@gmail.com")
+      .setPhoneNumber("4167812237")
+      .build();
 }

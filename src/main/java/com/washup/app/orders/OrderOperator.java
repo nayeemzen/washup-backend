@@ -5,7 +5,8 @@ import static org.hibernate.criterion.Restrictions.eq;
 import com.washup.app.database.hibernate.AbstractOperator;
 import com.washup.app.database.hibernate.Id;
 import com.washup.app.users.UserOperator;
-import com.washup.protos.Shared;
+import com.washup.protos.Admin.OrderInternal;
+import com.washup.protos.App.Order;
 import com.washup.protos.Shared.OrderStatus;
 import com.washup.protos.Shared.OrderType;
 import org.hibernate.Session;
@@ -24,7 +25,11 @@ public class OrderOperator extends AbstractOperator<DbOrder> {
     return entity.getId();
   }
 
-  public Shared.Order toWire() {
+  public OrderInternal toInternal() {
+    return entity.toInternal();
+  }
+
+  public Order toWire() {
     return entity.toWire();
   }
 

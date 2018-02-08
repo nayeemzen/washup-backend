@@ -58,7 +58,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             BasicAuthenticationFilter.class)
         .addFilter(new JWTAuthorizationFilter(authenticationManager))
         // Wash Up Employee Authentication Filters
-        .addFilterAfter(new JWTWashUpEmployeeAuthenticationFilter(washUpEmployeeAuthManager),
+        .addFilterAfter(new JWTWashUpEmployeeAuthenticationFilter(washUpEmployeeAuthManager,
+                messageConverter),
             JWTAuthorizationFilter.class)
         .addFilter(new JWTWashUpEmployeeAuthorizationFilter(washUpEmployeeAuthManager,
             washUpEmployeeOperatorFactory, transacter))

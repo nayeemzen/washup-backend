@@ -3,6 +3,7 @@ package com.washup.app.authentication;
 import static com.google.common.base.Preconditions.checkState;
 import static com.washup.app.configuration.SecurityConstants.HEADER_STRING;
 import static com.washup.app.configuration.SecurityConstants.TOKEN_PREFIX;
+import static com.washup.app.spring.EnumerationConverter.toList;
 
 import com.google.protobuf.Message;
 import com.washup.app.spring.ProtobufHttpMessageConverter;
@@ -83,13 +84,5 @@ public class JWTAuthenticationFilter
     checkState(auth.isAuthenticated());
     String token = JWTAuthenticationManager.getJwtToken((String) auth.getPrincipal());
     res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
-  }
-
-  private <T> List<T> toList(Enumeration<T> enumeration) {
-    List<T> result = new ArrayList<>();
-    while (enumeration.hasMoreElements()) {
-      result.add(enumeration.nextElement());
-    }
-    return result;
   }
 }

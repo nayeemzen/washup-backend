@@ -11,9 +11,9 @@ import com.washup.app.users.UserOperator;
 import com.washup.protos.App;
 import com.washup.protos.App.GetOrdersRequest;
 import com.washup.protos.App.GetOrdersResponse;
+import com.washup.protos.App.Order;
 import com.washup.protos.App.PlaceOrderResponse;
-import com.washup.protos.Shared;
-import com.washup.protos.Shared.Order;
+import com.washup.protos.Shared.OrderStatus;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -52,18 +52,19 @@ public class OrderController {
         "pickup_date is missing");
     ParametersChecker.check(request.getIdempotenceToken() != null, "idempotence_token is missing");
 
-    transacter.execute(session -> {
+    return transacter.call(session -> {
       UserOperator user = userOperatorFactory.getAuthenticatedUser(session, authentication);
-      orderOperatorFactory.create(session,
+      OrderOperator orderOperator = orderOperatorFactory.create(session,
           user,
           request.getOrderType(),
           request.getIdempotenceToken(),
-          Shared.OrderStatus.PENDING,
+          OrderStatus.PENDING,
           request.getDeliveryDate(),
           request.getPickupDate());
+      return PlaceOrderResponse.newBuilder()
+          .setOrder(orderOperator.toWire())
+          .build();
     });
-
-    return PlaceOrderResponse.newBuilder().build();
   }
 
   @GetMapping("/get-orders")

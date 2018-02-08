@@ -7,8 +7,8 @@ import com.washup.app.database.hibernate.IdEntity;
 import com.washup.app.database.hibernate.TimestampEntity;
 import com.washup.app.users.DbUser;
 import com.washup.app.users.UserOperator;
-import com.washup.protos.Shared;
-import com.washup.protos.Shared.Order;
+import com.washup.protos.Admin.OrderInternal;
+import com.washup.protos.App.Order;
 import com.washup.protos.Shared.OrderStatus;
 import com.washup.protos.Shared.OrderType;
 import java.util.Date;
@@ -136,8 +136,8 @@ public class DbOrder extends TimestampEntity implements IdEntity {
     this.rushService = rushService;
   }
 
-  public Shared.Order toWire() {
-    return Order.newBuilder()
+  public OrderInternal toInternal() {
+    return OrderInternal.newBuilder()
         .setUserToken(user.getToken().getId())
         .setToken(token)
         .setStatus(getStatus())
@@ -149,6 +149,18 @@ public class DbOrder extends TimestampEntity implements IdEntity {
         .setTotalCostCents(totalCostCents)
         .setCreatedAt(getCreatedAt().getTime())
         .setUpdatedAt(getUpdatedAt().getTime())
+        .build();
+  }
+  public Order toWire() {
+    return Order.newBuilder()
+        .setToken(token)
+        .setStatus(getStatus())
+        .setOrderType(getOrderType())
+        .setDeliveryDate(deliveryDate.getTime())
+        .setPickupDate(pickupDate.getTime())
+        .setBilledAt(billedAt != null ? billedAt.getTime() : 0)
+        .setRushService(rushService)
+        .setTotalCostCents(totalCostCents)
         .build();
   }
 

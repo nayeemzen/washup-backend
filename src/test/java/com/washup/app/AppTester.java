@@ -6,13 +6,13 @@ import com.google.common.collect.ImmutableList;
 import com.washup.app.users.UserTester;
 import com.washup.protos.App;
 import com.washup.protos.App.GetOrdersRequest;
+import com.washup.protos.App.GetOrdersResponse;
 import com.washup.protos.App.LoginRequest;
 import com.washup.protos.App.LoginResponse;
 import com.washup.protos.App.PlaceOrderRequest;
 import com.washup.protos.App.PlaceOrderResponse;
 import com.washup.protos.App.SignUpRequest;
 import com.washup.protos.App.SignUpResponse;
-import com.washup.protos.Internal.GetOrderResponse;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -83,8 +83,8 @@ public class AppTester {
     return post("/api/v1/orders/place-order", request, PlaceOrderResponse.class);
   }
 
-  public GetOrderResponse getOrder(GetOrdersRequest request) {
-    return get("/api/v1/orders/get-orders", request, GetOrderResponse.class);
+  public GetOrdersResponse getOrder(GetOrdersRequest request) {
+    return get("/api/v1/orders/get-orders", request, GetOrdersResponse.class);
   }
 
   private <T, R> T post(String uri, R request, Class<T> responseType) {
