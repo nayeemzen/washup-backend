@@ -8,9 +8,12 @@ import com.google.common.base.Strings;
 import com.washup.app.authentication.JWTAuthenticationManager;
 import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.exception.ParametersChecker;
+import com.washup.app.notifications.email.EmailNotificationService;
+import com.washup.app.notifications.email.Emails;
 import com.washup.app.users.UserOperator;
 import com.washup.protos.App;
 import com.washup.protos.App.SignUpResponse;
+import com.washup.protos.App.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,14 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(UserController.URL)
 public class UserController {
-
   static final String URL = API_URL + "/users";
 
-  @Autowired
-  Transacter transacter;
-
-  @Autowired
-  UserOperator.Factory userOperatorFactory;
+  @Autowired Transacter transacter;
+  @Autowired UserOperator.Factory userOperatorFactory;
+  @Autowired EmailNotificationService emailNotificationService;
 
   @PostMapping("/sign-up")
   public ResponseEntity<SignUpResponse> signUp(
@@ -49,8 +49,7 @@ public class UserController {
         "phone_number is missing");
 
     ResponseEntity<SignUpResponse> response = transacter.call(session -> {
-      UserOperator userOperator = userOperatorFactory.getUserByEmail(session,
-          request.getEmail());
+      UserOperator userOperator = userOperatorFactory.getUserByEmail(session, request.getEmail());
       // If user already exists, throw.
       if (userOperator != null) {
         App.SignUpResponse alreadyExistResponse =
@@ -82,6 +81,12 @@ public class UserController {
     String jwtToken = JWTAuthenticationManager.getJwtToken(request.getEmail());
     HttpHeaders responseHeaders = new HttpHeaders();
     responseHeaders.set(HEADER_STRING, TOKEN_PREFIX + jwtToken);
+
+    emailNotificationService.sendEmail(Emails.welcomeEmail(User.newBuilder()
+        .setFirstName(request.getFirstName())
+        .setEmail(request.getEmail())
+        .build()));
+
     return new ResponseEntity<>(SignUpResponse.newBuilder().build(), responseHeaders,
         HttpStatus.CREATED);
   }
