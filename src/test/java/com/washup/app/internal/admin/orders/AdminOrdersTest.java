@@ -10,9 +10,9 @@ import com.washup.app.internal.admin.washup_employees.WashUpEmployeeAppTester;
 import com.washup.app.orders.OrderTester;
 import com.washup.app.orders.OrderToken;
 import com.washup.app.tokens.Token;
-import com.washup.protos.Admin.GetOrderResponseInternal;
-import com.washup.protos.Admin.GetOrdersRequestInternal;
-import com.washup.protos.Admin.OrderInternal;
+import com.washup.protos.Admin.GetOrdersResponseAdmin;
+import com.washup.protos.Admin.GetOrdersRequestAdmin;
+import com.washup.protos.Admin.OrderAdmin;
 import com.washup.protos.App.PlaceOrderRequest;
 import com.washup.protos.App.PlaceOrderResponse;
 import com.washup.protos.Shared.OrderStatus;
@@ -65,12 +65,12 @@ public class AdminOrdersTest extends AbstractTest {
         new OrderToken(thomasOrder.getOrder().getToken()));
 
     // Only marks order is visible during 02-07
-    GetOrderResponseInternal order = washUpEmployeeAppTester.getOrders(
-        GetOrdersRequestInternal.newBuilder()
+    GetOrdersResponseAdmin order = washUpEmployeeAppTester.getOrders(
+        GetOrdersRequestAdmin.newBuilder()
             .setStartDate(DateTime.parse("2018-02-07T00:00:00").getMillis())
             .setEndDate(DateTime.parse("2018-02-07T23:59:59").getMillis())
             .build());
-    assertThat(order.getOrdersList()).isEqualTo(ImmutableList.of(OrderInternal.newBuilder()
+    assertThat(order.getOrdersList()).isEqualTo(ImmutableList.of(OrderAdmin.newBuilder()
         .setUserToken(markApp.userTester().getToken().getId())
         .setBilledAt(0)
         .setStatus(OrderStatus.PENDING)
@@ -86,8 +86,8 @@ public class AdminOrdersTest extends AbstractTest {
 
 
     // No dry cleaning orders are visible during 02-07
-    GetOrderResponseInternal noDryCleaningOrders = washUpEmployeeAppTester.getOrders(
-        GetOrdersRequestInternal.newBuilder()
+    GetOrdersResponseAdmin noDryCleaningOrders = washUpEmployeeAppTester.getOrders(
+        GetOrdersRequestAdmin.newBuilder()
             .setStartDate(DateTime.parse("2018-02-07T00:00:00").getMillis())
             .setEndDate(DateTime.parse("2018-02-07T23:59:59").getMillis())
             .setOrderType(OrderType.DRY_CLEAN)
@@ -95,13 +95,13 @@ public class AdminOrdersTest extends AbstractTest {
     assertThat(noDryCleaningOrders).isNull();
 
     // marks & thomas orders are visible during 02-07 and 02-08
-    GetOrderResponseInternal allOrders = washUpEmployeeAppTester.getOrders(
-        GetOrdersRequestInternal.newBuilder()
+    GetOrdersResponseAdmin allOrders = washUpEmployeeAppTester.getOrders(
+        GetOrdersRequestAdmin.newBuilder()
             .setStartDate(DateTime.parse("2018-02-07T00:00:00").getMillis())
             .setEndDate(DateTime.parse("2018-02-08T23:59:59").getMillis())
             .build());
     assertThat(allOrders.getOrdersList()).isEqualTo(ImmutableList.of(
-        OrderInternal.newBuilder()
+        OrderAdmin.newBuilder()
             .setUserToken(markApp.userTester().getToken().getId())
             .setBilledAt(0)
             .setStatus(OrderStatus.PENDING)
@@ -114,7 +114,7 @@ public class AdminOrdersTest extends AbstractTest {
             .setCreatedAt(markOrderTester.getCreatedAt().toInstant().toEpochMilli())
             .setUpdatedAt(markOrderTester.getUpdateAt().toInstant().toEpochMilli())
             .build(),
-        OrderInternal.newBuilder()
+        OrderAdmin.newBuilder()
             .setUserToken(thomasApp.userTester().getToken().getId())
             .setBilledAt(0)
             .setStatus(OrderStatus.PENDING)

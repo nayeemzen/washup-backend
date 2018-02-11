@@ -14,7 +14,7 @@ message WashEmployeeLoginRequest {
 message WashEmployeeLoginResponse {
 }
 
-message OrderInternal {
+message OrderAdmin {
   string token = 1;
   shared.OrderType order_type = 2;
   string user_token = 3;
@@ -28,7 +28,27 @@ message OrderInternal {
   uint64 updated_at = 11;
 }
 
-message GetOrdersRequestInternal {
+message AddressAdmin {
+  string street_address = 1;
+  string city = 2;
+  string apt = 3;
+  string postal_code = 4;
+  string notes = 5;
+}
+
+message UserAdmin {
+  string full_name = 1;
+  AddressAdmin address = 2;
+  string phone_number = 3;
+  string email = 4;
+}
+
+message GetOrderDataAdmin {
+  OrderAdmin order = 1;
+  UserAdmin user = 2;
+}
+
+message GetOrdersRequestAdmin {
   // both dates are inclusive [start_date, end_date]
   uint64 start_date = 1;
   uint64 end_date = 2;
@@ -37,6 +57,22 @@ message GetOrdersRequestInternal {
   bool billed = 5;
 }
 
-message GetOrderResponseInternal {
-  repeated OrderInternal orders = 1;
+message GetOrdersResponseAdmin {
+  repeated GetOrderDataAdmin orders = 1;
+}
+
+message SearchRequestAdmin {
+  string keyword = 1;
+}
+
+message SearchResponseAdmin {
+  string redirect_path = 1;
+}
+
+message GetOrderRequestAdmin {
+  string order_token = 1;
+}
+
+message GetOrderResponseAdmin {
+  GetOrderDataAdmin order_data = 1;
 }

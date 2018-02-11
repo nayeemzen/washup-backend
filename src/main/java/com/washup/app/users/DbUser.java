@@ -1,9 +1,14 @@
 package com.washup.app.users;
 
+import static org.hibernate.criterion.Restrictions.eq;
+
+import com.google.common.base.Strings;
 import com.washup.app.database.hibernate.Id;
 import com.washup.app.database.hibernate.IdEntity;
 import com.washup.app.database.hibernate.StoreAsString;
 import com.washup.app.database.hibernate.TimestampEntity;
+import com.washup.protos.Admin.AddressAdmin;
+import com.washup.protos.Admin.UserAdmin;
 import com.washup.protos.App;
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -79,6 +84,18 @@ public class DbUser extends TimestampEntity implements IdEntity {
 
   void setPhoneNumber(String phoneNumber) {
     this.phoneNumber = phoneNumber;
+  }
+
+  public UserAdmin toInternal(Session session) {
+    DbAddress address = (DbAddress) session.createCriteria(DbAddress.class)
+        .add(eq("userId", getId().getId()))
+        .uniqueResult();
+    return UserAdmin.newBuilder()
+        .setAddress(address != null ? address.toInternal() : AddressAdmin.newBuilder().build())
+        .setFullName(Strings.nullToEmpty(getFirstName()) + Strings.nullToEmpty(getLastName()))
+        .setPhoneNumber(phoneNumber)
+        .setEmail(email)
+        .build();
   }
 
   App.User toProto() {
