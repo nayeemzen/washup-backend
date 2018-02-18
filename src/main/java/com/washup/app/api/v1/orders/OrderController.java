@@ -62,7 +62,7 @@ public class OrderController {
           request.getDeliveryDate(),
           request.getPickupDate());
       return PlaceOrderResponse.newBuilder()
-          .setOrder(orderOperator.toWire())
+          .setOrder(orderOperator.toProto())
           .build();
     });
   }
@@ -75,7 +75,7 @@ public class OrderController {
           .userId(user.getId())
           .orderDesc("id")
           .list();
-      return orderOperators.stream().map(OrderOperator::toWire).collect(toList());
+      return orderOperators.stream().map(OrderOperator::toProto).collect(toList());
     });
 
     return GetOrdersResponse.newBuilder().addAllOrders(orders).build();

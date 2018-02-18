@@ -4,8 +4,8 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.collect.ImmutableList;
 import com.washup.app.database.hibernate.Transacter;
-import com.washup.protos.Admin.GetOrderResponseInternal;
-import com.washup.protos.Admin.GetOrdersRequestInternal;
+import com.washup.protos.Admin.GetOrdersRequestAdmin;
+import com.washup.protos.Admin.GetOrdersResponseAdmin;
 import com.washup.protos.App.LoginRequest;
 import com.washup.protos.App.LoginResponse;
 import java.util.List;
@@ -53,8 +53,8 @@ public class WashUpEmployeeAppTester {
     this.authToken = authorization.get(0);
   }
 
-  public GetOrderResponseInternal getOrders(GetOrdersRequestInternal request) {
-    return post("/_admin/orders/get-orders-internal", request, GetOrderResponseInternal.class);
+  public GetOrdersResponseAdmin getOrders(GetOrdersRequestAdmin request) {
+    return post("/_admin/orders/get-orders-admin", request, GetOrdersResponseAdmin.class);
   }
 
   private <T, R> T post(String uri, R request, Class<T> responseType) {

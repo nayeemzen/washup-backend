@@ -109,3 +109,16 @@ curl -i -H "Content-Type: application/json" -X POST -d '{"email": "ali@washup.io
 Get Orders
 ===
 curl -i -H "Content-Type: application/json" -H "Authorization: Bearer EMPLOYEE_AUTH_TOKEN" -X GET -d '{"start_date":1, "end_date":2, "order_type": "WASH_FOLD", "billed": true}'  http://localhost:8080/_admin/orders/get-orders
+
+Cards
+===
+
+Set Card
+====
+curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN" -X POST -d '{
+  "stripeCardToken": "tok_ca"
+}' http://localhost:8080/api/v1/users/set-card
+
+Get Card
+====
+curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN" -X GET http://localhost:8080/api/v1/users/get-card

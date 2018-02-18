@@ -7,7 +7,7 @@ import com.washup.app.database.hibernate.IdEntity;
 import com.washup.app.database.hibernate.TimestampEntity;
 import com.washup.app.users.DbUser;
 import com.washup.app.users.UserOperator;
-import com.washup.protos.Admin.OrderInternal;
+import com.washup.protos.Admin.OrderAdmin;
 import com.washup.protos.App.Order;
 import com.washup.protos.Shared.OrderStatus;
 import com.washup.protos.Shared.OrderType;
@@ -79,6 +79,10 @@ public class DbOrder extends TimestampEntity implements IdEntity {
     return new Id<>(id);
   }
 
+  DbUser getUser() {
+    return user;
+  }
+
   OrderToken getToken() {
     return OrderToken.of(token);
   }
@@ -136,8 +140,8 @@ public class DbOrder extends TimestampEntity implements IdEntity {
     this.rushService = rushService;
   }
 
-  public OrderInternal toInternal() {
-    return OrderInternal.newBuilder()
+  public OrderAdmin toInternal() {
+    return OrderAdmin.newBuilder()
         .setUserToken(user.getToken().getId())
         .setToken(token)
         .setStatus(getStatus())
@@ -151,7 +155,7 @@ public class DbOrder extends TimestampEntity implements IdEntity {
         .setUpdatedAt(getUpdatedAt().getTime())
         .build();
   }
-  public Order toWire() {
+  public Order toProto() {
     return Order.newBuilder()
         .setToken(token)
         .setStatus(getStatus())

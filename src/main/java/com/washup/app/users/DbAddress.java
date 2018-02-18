@@ -5,6 +5,7 @@ import static org.hibernate.criterion.Restrictions.eq;
 import com.washup.app.database.hibernate.Id;
 import com.washup.app.database.hibernate.IdEntity;
 import com.washup.app.database.hibernate.TimestampEntity;
+import com.washup.protos.Admin.AddressAdmin;
 import com.washup.protos.App;
 import javax.annotation.Nullable;
 import javax.persistence.Entity;
@@ -70,6 +71,15 @@ public class DbAddress extends TimestampEntity implements IdEntity {
   DbAddress setNotes(@Nullable String notes) {
     this.notes = notes;
     return this;
+  }
+
+  AddressAdmin toInternal() {
+    return AddressAdmin.newBuilder()
+        .setStreetAddress(streetAddress)
+        .setApt(apt)
+        .setPostalCode(postalCode)
+        .setNotes(notes)
+        .build();
   }
 
   App.Address toProto() {
