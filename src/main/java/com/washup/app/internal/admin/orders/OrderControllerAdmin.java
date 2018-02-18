@@ -86,6 +86,7 @@ public class OrderControllerAdmin {
           .getAuthenticatedEmployee(session, authentication);
       OrderOperator orderOperator = orderOperatorFactory
           .get(session, new OrderToken("#" + request.getOrderToken()));
+      ParametersChecker.check(orderOperator != null, "No order found");
       return GetOrderResponseAdmin.newBuilder()
           .setOrderData(GetOrderDataAdmin.newBuilder()
               .setOrder(orderOperator.toInternal())

@@ -24,8 +24,8 @@ class SendGridClient {
 
   @Autowired
   SendGridClient(Environment environment) {
-    this.sendGrid = new SendGrid(checkNotNull(environment.getProperty(SENDGRID_API_KEY)));
-    this.senderEmail = checkNotNull(environment.getProperty(SENDER_EMAIL));
+    this.sendGrid = null;//new SendGrid(checkNotNull(environment.getProperty(SENDGRID_API_KEY)));
+    this.senderEmail = null;//checkNotNull(environment.getProperty(SENDER_EMAIL));
   }
 
   void send(Email email) throws IOException {

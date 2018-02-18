@@ -21,3 +21,16 @@ enum OrderStatus {
 message Error {
   map<string, string> fields = 1;
 }
+
+message BillingAddress {
+  // Street address/PO Box/Company name
+  string line_1 = 1;
+  // Apartment/Suite/Unit/Building
+  string line_2 = 2;
+  // City/District/Suburb/Town/Village
+  string city = 3;
+  // State/Province
+  string state = 4;
+  // Zip/Postal Code
+  string postal_code = 5;
+}

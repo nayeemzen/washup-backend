@@ -5,13 +5,18 @@ CREATE TABLE `orders` (
   `user_id` bigint(20) NOT NULL,
   `order_type` varchar(50) NOT NULL,
   `status` varchar(255) NOT NULL,
-  `total_cost_cents` bigint(20) DEFAULT NULL,
   `pickup_date` datetime NOT NULL,
   `delivery_date` datetime NOT NULL,
   `rush_service` bit DEFAULT 0,
+  `billed_at` datetime DEFAULT NULL,
+  `stripe_charge_token` varchar(255) NOT NULL,
+  `total_cost_cents` bigint(20) DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY `unq_token` (`token`),
   UNIQUE KEY `unq_idempotence_token` (`idempotence_token`),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_pickup_date` (`pickup_date`),
+  KEY `idx_delivery_date` (`delivery_date`),
+  KEY `idx_pickup_delivery_date` (`pickup_date`,`delivery_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

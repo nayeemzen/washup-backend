@@ -10,6 +10,8 @@ import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.exception.ParametersChecker;
 import com.washup.app.notifications.email.EmailNotificationService;
 import com.washup.app.notifications.email.Emails;
+import com.washup.app.users.AddressOperator;
+import com.washup.app.users.PaymentCardOperator;
 import com.washup.app.users.UserOperator;
 import com.washup.protos.App;
 import com.washup.protos.App.SignUpResponse;
@@ -33,6 +35,8 @@ public class UserController {
   @Autowired Transacter transacter;
   @Autowired UserOperator.Factory userOperatorFactory;
   @Autowired EmailNotificationService emailNotificationService;
+  @Autowired PaymentCardOperator.Factory paymentCardOperatorFactory;
+  @Autowired AddressOperator.Factory addressOperatorFactory;
 
   @PostMapping("/sign-up")
   public ResponseEntity<SignUpResponse> signUp(
@@ -102,29 +106,31 @@ public class UserController {
         "last_name is missing");
     ParametersChecker.check(!Strings.isNullOrEmpty(user.getPhoneNumber()),
         "phone_number is missing");
-    App.User updatedUser = transacter.call(session -> {
+    return transacter.call(session -> {
       UserOperator currentUser = userOperatorFactory.getAuthenticatedUser(
           session, authentication);
       currentUser.setFirstName(user.getFirstName())
           .setLastName(user.getLastName())
           .setPhoneNumber(user.getPhoneNumber())
           .update();
-      return currentUser.toProto();
+      return App.SetProfileResponse.newBuilder()
+          .setUser(currentUser.toProto())
+          .build();
     });
-    return App.SetProfileResponse.newBuilder()
-        .setUser(updatedUser)
-        .build();
   }
 
   @GetMapping("/get-profile")
   public App.GetProfileResponse getProfile(Authentication authentication) {
-    App.User updatedUser = transacter.call(session -> {
+    return transacter.call(session -> {
       UserOperator currentUser = userOperatorFactory.getAuthenticatedUser(session, authentication);
-      return currentUser.toProto();
+      PaymentCardOperator paymentCardOperator = paymentCardOperatorFactory
+          .get(session, currentUser.getId());
+      AddressOperator addressOperator = addressOperatorFactory.get(session, currentUser.getId());
+      return App.GetProfileResponse.newBuilder()
+          .setUser(currentUser.toProto())
+          .setAddress(addressOperator != null ? addressOperator.toProto() : null)
+          .setCard(paymentCardOperator != null ? paymentCardOperator.toProto() : null)
+          .build();
     });
-
-    return App.GetProfileResponse.newBuilder()
-        .setUser(updatedUser)
-        .build();
   }
 }

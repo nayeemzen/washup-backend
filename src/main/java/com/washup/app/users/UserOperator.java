@@ -32,6 +32,10 @@ public class UserOperator extends AbstractOperator<DbUser> {
     return entity.getEncodedPassword();
   }
 
+  public String getEmail() {
+    return entity.getEmail();
+  }
+
   public UserOperator setFirstName(String firstName) {
     checkArgument(!Strings.isNullOrEmpty(firstName));
     entity.setFirstName(firstName);

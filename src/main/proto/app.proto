@@ -90,8 +90,15 @@ message User {
   string email = 4;
 }
 
+
+message PaymentCard {
+  string last_four = 1;
+}
+
 message GetProfileResponse {
   User user = 1;
+  Address address = 2;
+  PaymentCard card = 3;
 }
 
 message SetProfileRequest {
@@ -119,4 +126,22 @@ message SetPreferenceResponse {
 
 message GetPreferenceResponse {
   Preference preference = 1;
+}
+
+message SetPaymentCardRequest {
+  string stripe_card_token = 1;
+}
+
+message SetPaymentCardResponse {
+  enum Status {
+    UNKNOWN_PAYMENT_CARD_STATUS = 0;
+    SUCCESS = 1;
+    FAILURE = 2;
+  };
+
+  Status status = 1;
+}
+
+message GetPaymentCardResponse {
+  PaymentCard card = 1;
 }
