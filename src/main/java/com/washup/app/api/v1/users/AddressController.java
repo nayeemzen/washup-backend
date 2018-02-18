@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(AddressController.URL)
 public class AddressController {
 
-  static final String URL = API_URL + "/users";
+  static final String URL = API_URL + "/address";
 
   @Autowired
   Transacter transacter;
