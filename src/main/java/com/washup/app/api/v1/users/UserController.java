@@ -14,6 +14,8 @@ import com.washup.app.users.AddressOperator;
 import com.washup.app.users.PaymentCardOperator;
 import com.washup.app.users.UserOperator;
 import com.washup.protos.App;
+import com.washup.protos.App.GetProfileResponse;
+import com.washup.protos.App.GetProfileResponse.Builder;
 import com.washup.protos.App.SignUpResponse;
 import com.washup.protos.App.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,10 +128,15 @@ public class UserController {
       PaymentCardOperator paymentCardOperator = paymentCardOperatorFactory
           .get(session, currentUser.getId());
       AddressOperator addressOperator = addressOperatorFactory.get(session, currentUser.getId());
-      return App.GetProfileResponse.newBuilder()
-          .setUser(currentUser.toProto())
-          .setAddress(addressOperator != null ? addressOperator.toProto() : null)
-          .setCard(paymentCardOperator != null ? paymentCardOperator.toProto() : null)
+      Builder builder = GetProfileResponse.newBuilder()
+          .setUser(currentUser.toProto());
+      if (paymentCardOperator != null) {
+        builder.setCard(paymentCardOperator.toProto());
+      }
+      if (addressOperator != null) {
+        builder.setAddress(addressOperator.toProto());
+      }
+      return builder
           .build();
     });
   }
