@@ -122,3 +122,10 @@ curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN
 Get Card
 ====
 curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN" -X GET http://localhost:8080/api/v1/users/get-card
+
+
+Seed Data
+===
+INSERT INTO pricing_buckets(bucket_name) VALUES ("TORONTO");
+INSERT INTO item_pricings(item, price_cents, bucket_id) VALUES ("LAUNDERED_SHIRT", 395, 1), ("DRY_CLEAN_SHIRT", 425, 1), ("PER_POUND", 199, 1), ("DOUBLE_BLANKET", 3599, 1);
+INSERT INTO postal_codes(postal_code, rule, bucket_id) VALUES ("M5", "STARTS_WITH", 1);
