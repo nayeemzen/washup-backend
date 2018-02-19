@@ -23,7 +23,7 @@ Signup
 curl -H "Content-Type: application/json" -X POST -d '{
   "first_name": "john",
   "last_name": "doe",
-  "email": "admin",
+  "email": "johndoe@gmail.com",
   "password": "password",
   "phone_number": "phone_number"
 }' http://localhost:8080/api/v1/users/sign-up
@@ -40,7 +40,7 @@ curl -i -H "Content-Type: application/json" -X POST -d '{
 Order
 ===
 curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN_HERE" -X POST -d '{
-  "order_type": 0, 
+  "order_type": 1, 
   "delivery_date": 1515900795000, 
   "pickup_date": 1515801600000, 
   "idempotence_token": "abc"
