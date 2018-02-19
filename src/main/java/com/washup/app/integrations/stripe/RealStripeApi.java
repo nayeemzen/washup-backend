@@ -40,8 +40,7 @@ public class RealStripeApi implements StripeApi {
     Customer customer = Customer.retrieve(stripeCustomerToken);
     Map<String, Object> customerParams = new HashMap<>();
     customerParams.put("source", stripeCardToken);
-    customer.update(customerParams);
-    return customer;
+    return customer.update(customerParams);
   }
 
   @Override
