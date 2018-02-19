@@ -10,12 +10,16 @@ import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
 
+@Service
 public class RealStripeApi implements StripeApi {
   private static final Logger logger = LoggerFactory.getLogger(RealStripeApi.class);
   private static final String SECRET_API_KEY_NAME = "STRIPE_SECRET_API_KEY";
 
+  @Autowired
   public RealStripeApi(Environment environment) {
     Stripe.apiKey = checkNotNull(environment.getProperty(SECRET_API_KEY_NAME));
   }

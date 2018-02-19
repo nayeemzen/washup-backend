@@ -1,7 +1,6 @@
 package com.washup.app.users;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 import static org.hibernate.criterion.Restrictions.eq;
 
 import com.google.common.base.Strings;
@@ -11,6 +10,7 @@ import com.washup.protos.App;
 import javax.annotation.Nullable;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -103,7 +103,10 @@ public class UserOperator extends AbstractOperator<DbUser> {
 
     public UserOperator getAuthenticatedUser(Session session, Authentication authentication) {
       UserOperator user = getUserByEmail(session, (String) authentication.getPrincipal());
-      checkState(user != null);
+      if (user == null) {
+        throw new AuthenticationCredentialsNotFoundException("Could not find user.");
+      }
+
       return user;
     }
   }

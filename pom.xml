@@ -254,6 +254,10 @@
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>5.0.5</version>
+								<configuration>
+									<url>jdbc:mysql://localhost:3306/washup_development</url>
+									<user>root</user>
+								</configuration>
             </plugin>
 
 		</plugins>
