@@ -124,6 +124,15 @@ Get Card
 curl -i -H "Content-Type: application/json" -H "Authorization: Bearer AUTH_TOKEN" -X GET http://localhost:8080/api/v1/users/get-card
 
 
+Pricing
+====
+
+Get Postal Code Pricing
+===
+curl -i -H "Content-Type: application/json" -H "Accept: application/json" -X POST -d '{
+  "postal_code": "M5T1T4"
+}' http://localhost:8080/api/v1/pricing/get-postal-code-pricing
+
 Seed Data
 ===
 INSERT INTO pricing_buckets(bucket_name) VALUES ("TORONTO");
