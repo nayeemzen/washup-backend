@@ -9,7 +9,7 @@ CREATE TABLE `orders` (
   `delivery_date` datetime NOT NULL,
   `rush_service` bit DEFAULT 0,
   `billed_at` datetime DEFAULT NULL,
-  `stripe_charge_token` varchar(255) NOT NULL,
+  `stripe_charge_token` varchar(255) DEFAULT NULL,
   `total_cost_cents` bigint(20) DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP,
