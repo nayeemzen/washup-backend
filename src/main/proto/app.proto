@@ -151,7 +151,7 @@ message GetUserPricingRequest {
 }
 
 message GetUserPricingResponse {
-  repeated Pricing laundry = 1;
+  repeated Pricing wash_fold = 1;
   repeated Pricing dry_clean = 2;
 }
 

@@ -41,6 +41,10 @@ public class AddressOperator {
     return this;
   }
 
+  public String getPostalCode() {
+    return address.getPostalCode();
+  }
+
   public AddressOperator update() {
     session.update(address);
     return this;
