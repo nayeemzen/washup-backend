@@ -2,7 +2,13 @@ package com.washup.app.api.v1.pricing;
 
 import static com.washup.app.api.v1.ApiConstants.API_URL;
 
+import com.google.common.base.Strings;
 import com.washup.app.database.hibernate.Transacter;
+import com.washup.app.exception.ParametersChecker;
+import com.washup.app.pricing.ItemPricingFetcher;
+import com.washup.app.pricing.PostalCodeOperator;
+import com.washup.app.users.AddressOperator;
+import com.washup.app.users.UserOperator;
 import com.washup.protos.App.GetPostalCodePricingRequest;
 import com.washup.protos.App.GetPostalCodePricingResponse;
 import com.washup.protos.App.GetUserPricingResponse;
@@ -23,14 +29,54 @@ public class PricingController {
   @Autowired
   Transacter transacter;
 
+  @Autowired
+  PostalCodeOperator.Factory postalCodeOperatorFactory;
+
+  @Autowired
+  UserOperator.Factory userOperatorFactory;
+
+  @Autowired
+  AddressOperator.Factory addressOperatorFactory;
+
   @GetMapping("/get-user-pricing")
   public GetUserPricingResponse getUserPricing(Authentication authentication) {
-    throw new UnsupportedOperationException();
+    return transacter.call(session -> {
+      UserOperator user = userOperatorFactory.getAuthenticatedUser(session, authentication);
+      AddressOperator addressOperator = addressOperatorFactory.get(session, user.getId());
+      ParametersChecker.check(addressOperator != null, "Set the address first");
+      PostalCodeOperator postalCodeOperator = postalCodeOperatorFactory
+          .get(session, addressOperator.getPostalCode());
+      // No postal code match was found.
+      if (postalCodeOperator == null) {
+        return GetUserPricingResponse.newBuilder()
+            .build();
+      }
+      ItemPricingFetcher pricingFetcher = postalCodeOperator.getPricingFetcher();
+      return GetUserPricingResponse.newBuilder()
+          .addAllDryClean(pricingFetcher.dryCleanPricing())
+          .addAllWashFold(pricingFetcher.washFoldPricing())
+          .build();
+    });
   }
 
-  @PostMapping("/get-user-pricing")
+  @PostMapping("/get-postal-code-pricing")
   public GetPostalCodePricingResponse getPostalCodePricing(
-      @RequestBody GetPostalCodePricingRequest request, Authentication authentication) {
-    throw new UnsupportedOperationException();
+      @RequestBody GetPostalCodePricingRequest request) {
+    ParametersChecker.check(!Strings.isNullOrEmpty(request.getPostalCode()),
+        "postal_code is required");
+    return transacter.call(session -> {
+      PostalCodeOperator postalCodeOperator = postalCodeOperatorFactory
+          .get(session, request.getPostalCode());
+      // No postal code match was found.
+      if (postalCodeOperator == null) {
+        return GetPostalCodePricingResponse.newBuilder()
+            .build();
+      }
+      ItemPricingFetcher pricingFetcher = postalCodeOperator.getPricingFetcher();
+      return GetPostalCodePricingResponse.newBuilder()
+          .addAllDryClean(pricingFetcher.dryCleanPricing())
+          .addAllWashFold(pricingFetcher.washFoldPricing())
+          .build();
+    });
   }
 }

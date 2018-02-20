@@ -9,32 +9,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Table;
 
-@Entity(name = "postal_codes")
-@Table(name = "postal_codes")
-public class DbPostalCode extends TimestampEntity implements IdEntity {
-  public enum Rules {
-    STARTS_WITH,
-    FULL_MATCH,
-  }
-
+@Entity(name = "pricing_buckets")
+@Table(name = "pricing_buckets")
+public class DbPricingBucket extends TimestampEntity implements IdEntity {
   @javax.persistence.Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(nullable = false)
-  private String postalCode;
+  private String bucketName;
 
-  @Column(nullable = false)
-  private String rule;
-
-  @Column(nullable = false)
-  private Long bucketId;
-
-  public Id<DbPostalCode> getId() {
+  public Id<DbPricingBucket> getId() {
     return new Id<>(id);
-  }
-
-  public Id<DbPricingBucket> getBucketId() {
-    return new Id<>(bucketId);
   }
 }

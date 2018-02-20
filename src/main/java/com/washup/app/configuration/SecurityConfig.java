@@ -50,6 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             bCryptPasswordEncoder);
     http.cors().and().csrf().disable().authorizeRequests()
         .antMatchers(HttpMethod.POST, "/api/v1/users/sign-up").permitAll()
+        .antMatchers(HttpMethod.POST, "/api/v1/pricing/get-postal-code-pricing").permitAll()
         .anyRequest()
         .authenticated()
         .and()
