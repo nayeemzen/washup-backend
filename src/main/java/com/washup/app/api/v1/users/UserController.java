@@ -140,7 +140,7 @@ public class UserController {
         builder.setAddress(addressOperator.toProto());
         PostalCodeOperator postalCodeOperator = postalCodeOperatorFactory
             .get(session, addressOperator.getPostalCode());
-        builder.setAvailibity(postalCodeOperator != null
+        builder.setAvailability(postalCodeOperator != null
             ? postalCodeOperator.getAvailibilty()
             : ServiceAvailability.NOT_AVAILABLE);
       }

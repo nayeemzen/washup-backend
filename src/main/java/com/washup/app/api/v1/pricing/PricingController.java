@@ -52,14 +52,14 @@ public class PricingController {
       // No postal code match was found.
       if (postalCodeOperator == null) {
         return GetUserPricingResponse.newBuilder()
-            .setAvailibity(ServiceAvailability.NOT_AVAILABLE)
+            .setAvailability(ServiceAvailability.NOT_AVAILABLE)
             .build();
       }
       ItemPricingFetcher pricingFetcher = postalCodeOperator.getPricingFetcher();
       return GetUserPricingResponse.newBuilder()
           .addAllDryClean(pricingFetcher.dryCleanPricing())
           .addAllWashFold(pricingFetcher.washFoldPricing())
-          .setAvailibity(postalCodeOperator.getAvailibilty())
+          .setAvailability(postalCodeOperator.getAvailibilty())
           .build();
     });
   }

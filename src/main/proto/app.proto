@@ -103,7 +103,7 @@ message GetProfileResponse {
   User user = 1;
   Address address = 2;
   PaymentCard card = 3;
-  ServiceAvailability availibity = 4;
+  ServiceAvailability availability = 4;
 }
 
 message SetProfileRequest {
@@ -162,7 +162,7 @@ message GetUserPricingRequest {
 message GetUserPricingResponse {
   repeated Pricing wash_fold = 1;
   repeated Pricing dry_clean = 2;
-  ServiceAvailability availibity = 3;
+  ServiceAvailability availability = 3;
 }
 
 message GetPostalCodePricingRequest {
