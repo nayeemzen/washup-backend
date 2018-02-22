@@ -12,6 +12,9 @@ import com.washup.app.users.UserOperator;
 import com.washup.protos.App.GetPostalCodePricingRequest;
 import com.washup.protos.App.GetPostalCodePricingResponse;
 import com.washup.protos.App.GetUserPricingResponse;
+import com.washup.protos.App.Pricing;
+import com.washup.protos.App.ServiceAvailability;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,12 +52,14 @@ public class PricingController {
       // No postal code match was found.
       if (postalCodeOperator == null) {
         return GetUserPricingResponse.newBuilder()
+            .setAvailibity(ServiceAvailability.NOT_AVAILABLE)
             .build();
       }
       ItemPricingFetcher pricingFetcher = postalCodeOperator.getPricingFetcher();
       return GetUserPricingResponse.newBuilder()
           .addAllDryClean(pricingFetcher.dryCleanPricing())
           .addAllWashFold(pricingFetcher.washFoldPricing())
+          .setAvailibity(postalCodeOperator.getAvailibilty())
           .build();
     });
   }
@@ -70,12 +75,16 @@ public class PricingController {
       // No postal code match was found.
       if (postalCodeOperator == null) {
         return GetPostalCodePricingResponse.newBuilder()
+            .setAvailibity(ServiceAvailability.NOT_AVAILABLE)
             .build();
       }
       ItemPricingFetcher pricingFetcher = postalCodeOperator.getPricingFetcher();
+      List<Pricing> dryCleaningPricing = pricingFetcher.dryCleanPricing();
+      List<Pricing> washFoldPricing = pricingFetcher.washFoldPricing();
       return GetPostalCodePricingResponse.newBuilder()
-          .addAllDryClean(pricingFetcher.dryCleanPricing())
-          .addAllWashFold(pricingFetcher.washFoldPricing())
+          .addAllDryClean(dryCleaningPricing)
+          .addAllWashFold(washFoldPricing)
+          .setAvailibity(postalCodeOperator.getAvailibilty())
           .build();
     });
   }

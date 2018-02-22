@@ -7,13 +7,18 @@ import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.exception.ParametersChecker;
 import com.washup.app.orders.OrderOperator;
 import com.washup.app.orders.OrderQuery;
+import com.washup.app.pricing.PostalCodeOperator;
+import com.washup.app.users.AddressOperator;
+import com.washup.app.users.PaymentCardOperator;
 import com.washup.app.users.UserOperator;
 import com.washup.protos.App;
 import com.washup.protos.App.GetOrdersRequest;
 import com.washup.protos.App.GetOrdersResponse;
 import com.washup.protos.App.Order;
 import com.washup.protos.App.PlaceOrderResponse;
+import com.washup.protos.App.ServiceAvailability;
 import com.washup.protos.Shared.OrderStatus;
+import com.washup.protos.Shared.OrderType;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -41,6 +46,15 @@ public class OrderController {
   @Autowired
   UserOperator.Factory userOperatorFactory;
 
+  @Autowired
+  AddressOperator.Factory addressOperatorFactory;
+
+  @Autowired
+  PaymentCardOperator.Factory paymentCardOperatorFactory;
+
+  @Autowired
+  PostalCodeOperator.Factory postalCodeOperatorFactory;
+
   @PostMapping("/place-order")
   public PlaceOrderResponse placeOrder(@RequestBody App.PlaceOrderRequest request,
       Authentication authentication) {
@@ -54,6 +68,27 @@ public class OrderController {
 
     return transacter.call(session -> {
       UserOperator user = userOperatorFactory.getAuthenticatedUser(session, authentication);
+      PaymentCardOperator paymentCardOperator = paymentCardOperatorFactory
+          .get(session, user.getId());
+      ParametersChecker.check(paymentCardOperator != null,
+          "user must set payment card before ordering");
+      AddressOperator addressOperator = addressOperatorFactory.get(session, user.getId());
+      ParametersChecker.check(addressOperator != null, "user must set address before ordering");
+      PostalCodeOperator postalCodeOperator = postalCodeOperatorFactory
+          .get(session, addressOperator.getPostalCode());
+      ParametersChecker.check(postalCodeOperator != null,
+          "Service is not available in your region");
+      ServiceAvailability availibilty = postalCodeOperator.getAvailibilty();
+      if (request.getOrderType() == OrderType.DRY_CLEAN) {
+        ParametersChecker.check(availibilty == ServiceAvailability.WASH_FOLD_DRY_CLEANING_AVAILABLE
+            || availibilty == ServiceAvailability.ONLY_DRY_CLEANING_AVAILBLE,
+            "Dry cleaning is not available in your area");
+      }
+      if (request.getOrderType() == OrderType.WASH_FOLD) {
+        ParametersChecker.check(availibilty == ServiceAvailability.WASH_FOLD_DRY_CLEANING_AVAILABLE
+                || availibilty == ServiceAvailability.ONLY_WASH_FOLD_AVAILABLE,
+            "Wash Fold is not available in your area");
+      }
       OrderOperator orderOperator = orderOperatorFactory.create(session,
           user,
           request.getOrderType(),

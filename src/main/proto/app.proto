@@ -91,10 +91,19 @@ message PaymentCard {
   string last_four = 1;
 }
 
+enum ServiceAvailability {
+  SERVICE_AVAILABILITY_UNKNOWN = 0;
+  NOT_AVAILABLE = 1;
+  WASH_FOLD_DRY_CLEANING_AVAILABLE = 2;
+  ONLY_WASH_FOLD_AVAILABLE = 3;
+  ONLY_DRY_CLEANING_AVAILBLE = 4;
+}
+
 message GetProfileResponse {
   User user = 1;
   Address address = 2;
   PaymentCard card = 3;
+  ServiceAvailability availibity = 4;
 }
 
 message SetProfileRequest {
@@ -153,6 +162,7 @@ message GetUserPricingRequest {
 message GetUserPricingResponse {
   repeated Pricing wash_fold = 1;
   repeated Pricing dry_clean = 2;
+  ServiceAvailability availibity = 3;
 }
 
 message GetPostalCodePricingRequest {
@@ -162,4 +172,5 @@ message GetPostalCodePricingRequest {
 message GetPostalCodePricingResponse {
   repeated Pricing wash_fold = 1;
   repeated Pricing dry_clean = 2;
+  ServiceAvailability availibity = 3;
 }

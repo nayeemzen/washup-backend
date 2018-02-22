@@ -10,12 +10,14 @@ import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.exception.ParametersChecker;
 import com.washup.app.notifications.email.EmailNotificationService;
 import com.washup.app.notifications.email.Emails;
+import com.washup.app.pricing.PostalCodeOperator;
 import com.washup.app.users.AddressOperator;
 import com.washup.app.users.PaymentCardOperator;
 import com.washup.app.users.UserOperator;
 import com.washup.protos.App;
 import com.washup.protos.App.GetProfileResponse;
 import com.washup.protos.App.GetProfileResponse.Builder;
+import com.washup.protos.App.ServiceAvailability;
 import com.washup.protos.App.SignUpResponse;
 import com.washup.protos.App.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,7 @@ public class UserController {
   @Autowired EmailNotificationService emailNotificationService;
   @Autowired PaymentCardOperator.Factory paymentCardOperatorFactory;
   @Autowired AddressOperator.Factory addressOperatorFactory;
+  @Autowired PostalCodeOperator.Factory postalCodeOperatorFactory;
 
   @PostMapping("/sign-up")
   public ResponseEntity<SignUpResponse> signUp(
@@ -135,6 +138,11 @@ public class UserController {
       }
       if (addressOperator != null) {
         builder.setAddress(addressOperator.toProto());
+        PostalCodeOperator postalCodeOperator = postalCodeOperatorFactory
+            .get(session, addressOperator.getPostalCode());
+        builder.setAvailibity(postalCodeOperator != null
+            ? postalCodeOperator.getAvailibilty()
+            : ServiceAvailability.NOT_AVAILABLE);
       }
       return builder
           .build();
