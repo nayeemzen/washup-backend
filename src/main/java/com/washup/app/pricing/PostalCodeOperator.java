@@ -5,6 +5,9 @@ import static org.hibernate.criterion.Restrictions.eq;
 import com.washup.app.database.hibernate.AbstractOperator;
 import com.washup.app.database.hibernate.Id;
 import com.washup.app.pricing.DbPostalCode.Rules;
+import com.washup.protos.App.Pricing;
+import com.washup.protos.App.ServiceAvailability;
+import java.util.List;
 import javax.annotation.Nullable;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,20 @@ public class PostalCodeOperator extends AbstractOperator<DbPostalCode> {
 
   public ItemPricingFetcher getPricingFetcher() {
     return itemPricingFetcherFactory.get(session, entity.getBucketId());
+  }
+
+  public ServiceAvailability getAvailibilty() {
+    ItemPricingFetcher pricingFetcher = getPricingFetcher();
+    List<Pricing> dryCleaningPricing = pricingFetcher.dryCleanPricing();
+    List<Pricing> washFoldPricing = pricingFetcher.washFoldPricing();
+    if (dryCleaningPricing.isEmpty() && washFoldPricing.isEmpty()) {
+      return ServiceAvailability.NOT_AVAILABLE;
+    } else if (dryCleaningPricing.isEmpty()) {
+      return ServiceAvailability.ONLY_WASH_FOLD_AVAILABLE;
+    } else if (washFoldPricing.isEmpty()) {
+      return ServiceAvailability.ONLY_DRY_CLEANING_AVAILBLE;
+    }
+    return ServiceAvailability.WASH_FOLD_DRY_CLEANING_AVAILABLE;
   }
 
   @Component
