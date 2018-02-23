@@ -6,9 +6,11 @@ import static com.washup.app.api.v1.ApiConstants.API_URL;
 import com.google.common.base.Strings;
 import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.exception.ParametersChecker;
+import com.washup.app.pricing.PostalCodeOperator;
 import com.washup.app.users.AddressOperator;
 import com.washup.app.users.UserOperator;
 import com.washup.protos.App;
+import com.washup.protos.App.ServiceAvailability;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +34,9 @@ public class AddressController {
   @Autowired
   UserOperator.Factory userOperatorFactory;
 
+  @Autowired
+  PostalCodeOperator.Factory postalCodeOperatorFactory;
+
   @PostMapping("/set-address")
   public App.SetAddressResponse SetAddress(
       @RequestBody App.SetAddressRequest request,
@@ -43,7 +48,7 @@ public class AddressController {
     ParametersChecker.check(!Strings.isNullOrEmpty(address.getPostalCode()),
         "postal_code is missing");
 
-    App.Address updatedAddress = transacter.call(session -> {
+    return transacter.call(session -> {
       UserOperator user = userOperatorFactory.getAuthenticatedUser(session,
           authentication);
       checkState(user != null);
@@ -63,11 +68,17 @@ public class AddressController {
             .setNotes(address.getNotes())
             .update();
       }
-      return addressOperator.toProto();
+
+      PostalCodeOperator postalCodeOperator = postalCodeOperatorFactory
+          .get(session, addressOperator.getPostalCode());
+
+      return App.SetAddressResponse.newBuilder()
+          .setAddress(addressOperator.toProto())
+          .setAvailability(postalCodeOperator != null
+              ? postalCodeOperator.getAvailibilty()
+              : ServiceAvailability.NOT_AVAILABLE)
+          .build();
     });
-    return App.SetAddressResponse.newBuilder()
-        .setAddress(updatedAddress)
-        .build();
   }
 
   @GetMapping("/get-address")
