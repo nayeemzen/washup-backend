@@ -81,7 +81,7 @@ public class OrderController {
       ServiceAvailability availibilty = postalCodeOperator.getAvailibilty();
       if (request.getOrderType() == OrderType.DRY_CLEAN) {
         ParametersChecker.check(availibilty == ServiceAvailability.WASH_FOLD_DRY_CLEANING_AVAILABLE
-            || availibilty == ServiceAvailability.ONLY_DRY_CLEANING_AVAILBLE,
+            || availibilty == ServiceAvailability.ONLY_DRY_CLEANING_AVAILABLE,
             "Dry cleaning is not available in your area");
       }
       if (request.getOrderType() == OrderType.WASH_FOLD) {

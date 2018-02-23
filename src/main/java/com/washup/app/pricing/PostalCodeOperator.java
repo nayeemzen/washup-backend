@@ -40,7 +40,7 @@ public class PostalCodeOperator extends AbstractOperator<DbPostalCode> {
     } else if (dryCleaningPricing.isEmpty()) {
       return ServiceAvailability.ONLY_WASH_FOLD_AVAILABLE;
     } else if (washFoldPricing.isEmpty()) {
-      return ServiceAvailability.ONLY_DRY_CLEANING_AVAILBLE;
+      return ServiceAvailability.ONLY_DRY_CLEANING_AVAILABLE;
     }
     return ServiceAvailability.WASH_FOLD_DRY_CLEANING_AVAILABLE;
   }
