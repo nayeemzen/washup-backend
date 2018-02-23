@@ -1,12 +1,16 @@
 package com.washup.app.api.v1.orders;
 
+import static com.google.common.base.Preconditions.checkState;
 import static com.washup.app.api.v1.ApiConstants.API_URL;
 import static java.util.stream.Collectors.toList;
 
+import com.google.common.base.Strings;
 import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.exception.ParametersChecker;
+import com.washup.app.orders.ItemizedReceiptOperator;
 import com.washup.app.orders.OrderOperator;
 import com.washup.app.orders.OrderQuery;
+import com.washup.app.orders.OrderToken;
 import com.washup.app.pricing.PostalCodeOperator;
 import com.washup.app.users.AddressOperator;
 import com.washup.app.users.PaymentCardOperator;
@@ -14,8 +18,12 @@ import com.washup.app.users.UserOperator;
 import com.washup.protos.App;
 import com.washup.protos.App.GetOrdersRequest;
 import com.washup.protos.App.GetOrdersResponse;
+import com.washup.protos.App.GetReceiptRequest;
+import com.washup.protos.App.GetReceiptResponse;
 import com.washup.protos.App.Order;
 import com.washup.protos.App.PlaceOrderResponse;
+import com.washup.protos.App.Receipt;
+import com.washup.protos.App.ReceiptItem;
 import com.washup.protos.App.ServiceAvailability;
 import com.washup.protos.Shared.OrderStatus;
 import com.washup.protos.Shared.OrderType;
@@ -54,6 +62,9 @@ public class OrderController {
 
   @Autowired
   PostalCodeOperator.Factory postalCodeOperatorFactory;
+
+  @Autowired
+  ItemizedReceiptOperator.Factory itemizedReceiptOperatorFactory;
 
   @PostMapping("/place-order")
   public PlaceOrderResponse placeOrder(@RequestBody App.PlaceOrderRequest request,
@@ -114,5 +125,31 @@ public class OrderController {
     });
 
     return GetOrdersResponse.newBuilder().addAllOrders(orders).build();
+  }
+
+  @PostMapping("/get-receipt")
+  public GetReceiptResponse getReceipt(@RequestBody GetReceiptRequest request,
+      Authentication authentication) {
+    ParametersChecker.check(!Strings.isNullOrEmpty(request.getOrderToken()),
+        "order_token is missing");
+    return transacter.call(session -> {
+      UserOperator user = userOperatorFactory.getAuthenticatedUser(session, authentication);
+      OrderOperator orderOperator = orderOperatorFactory
+          .get(session, new OrderToken(request.getOrderToken()));
+      checkState(user.getId().equals(orderOperator.getUser().getId()));
+      ItemizedReceiptOperator itemizedReceiptOperator = itemizedReceiptOperatorFactory
+          .get(session, orderOperator.getId());
+      List<ReceiptItem> receiptItems = itemizedReceiptOperator.toProto();
+      long totalAmountCents = 0;
+      for (ReceiptItem receiptItem : receiptItems) {
+        totalAmountCents += receiptItem.getItemPriceCents();
+      }
+      return GetReceiptResponse.newBuilder()
+          .setReceipt(Receipt.newBuilder()
+              .addAllItems(receiptItems)
+              .setTotalAmountCents(totalAmountCents)
+              .build())
+          .build();
+    });
   }
 }

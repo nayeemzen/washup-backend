@@ -1,6 +1,7 @@
 package com.washup.app.database.hibernate;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public abstract class AbstractIdentifier<T> implements Serializable {
 
@@ -20,5 +21,10 @@ public abstract class AbstractIdentifier<T> implements Serializable {
   @Override
   public String toString() {
     return String.valueOf(id);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof AbstractIdentifier && Objects.equals(id, ((AbstractIdentifier) obj).id);
   }
 }

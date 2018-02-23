@@ -4,6 +4,7 @@ import com.washup.app.integrations.stripe.RealStripeApi;
 import com.washup.app.integrations.stripe.StripeApi;
 import com.washup.app.notifications.email.EmailNotificationService;
 import com.washup.app.notifications.email.RealEmailNotificationService;
+import javax.inject.Singleton;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

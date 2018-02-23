@@ -18,14 +18,14 @@ import washup.protos.notification.Notification.Email;
 @Service
 class SendGridClient {
   private static final String SENDGRID_API_KEY = "SENDGRID_API_KEY";
-  private static final String SENDER_EMAIL = "sender_email_address";
+  private static final String SENDER_EMAIL = "SENDER_EMAIL_ADDRESS";
   private final SendGrid sendGrid;
   private final String senderEmail;
 
   @Autowired
   SendGridClient(Environment environment) {
-    this.sendGrid = null;//new SendGrid(checkNotNull(environment.getProperty(SENDGRID_API_KEY)));
-    this.senderEmail = null;//checkNotNull(environment.getProperty(SENDER_EMAIL));
+    this.sendGrid = new SendGrid(checkNotNull(environment.getProperty(SENDGRID_API_KEY)));
+    this.senderEmail = checkNotNull(environment.getProperty(SENDER_EMAIL));
   }
 
   void send(Email email) throws IOException {

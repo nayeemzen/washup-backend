@@ -28,7 +28,7 @@ message LoginResponse {
 }
 
 message PlaceOrderRequest {
-  washup.protos.shared.OrderType order_type = 1;
+  shared.OrderType order_type = 1;
   uint64 pickup_date = 2;
   uint64 delivery_date = 3;
   string idempotence_token = 4;
@@ -44,6 +44,26 @@ message Order {
   uint64 billed_at = 6;
   bool rush_service = 7;
   int64 total_cost_cents = 8;
+}
+
+message ReceiptItem {
+  string item_name = 1;
+  int64 item_price_cents = 2;
+  int32 item_quatity = 3;
+  int64 item_total_price_cents = 4;
+}
+
+message Receipt {
+  repeated ReceiptItem items = 1;
+  int64 total_amount_cents = 2;
+}
+
+message GetReceiptResponse {
+  Receipt receipt = 1;
+}
+
+message GetReceiptRequest {
+  string order_token = 1;
 }
 
 message PlaceOrderResponse{

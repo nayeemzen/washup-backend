@@ -13,7 +13,6 @@ import com.washup.protos.Shared.OrderType;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 public class OrderOperator extends AbstractOperator<DbOrder> {
@@ -40,8 +39,6 @@ public class OrderOperator extends AbstractOperator<DbOrder> {
 
   @Component
   public static class Factory {
-
-    @Autowired OrderQuery.Factory orderQueryFactory;
 
     public OrderOperator create(Session session, UserOperator user, OrderType orderType,
         String idempotenceToken, OrderStatus status, long deliveryDate,
