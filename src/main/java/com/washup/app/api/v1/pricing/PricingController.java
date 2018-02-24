@@ -75,7 +75,7 @@ public class PricingController {
       // No postal code match was found.
       if (postalCodeOperator == null) {
         return GetPostalCodePricingResponse.newBuilder()
-            .setAvailibity(ServiceAvailability.NOT_AVAILABLE)
+            .setAvailability(ServiceAvailability.NOT_AVAILABLE)
             .build();
       }
       ItemPricingFetcher pricingFetcher = postalCodeOperator.getPricingFetcher();
@@ -84,7 +84,7 @@ public class PricingController {
       return GetPostalCodePricingResponse.newBuilder()
           .addAllDryClean(dryCleaningPricing)
           .addAllWashFold(washFoldPricing)
-          .setAvailibity(postalCodeOperator.getAvailibilty())
+          .setAvailability(postalCodeOperator.getAvailibilty())
           .build();
     });
   }

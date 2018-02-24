@@ -173,5 +173,5 @@ message GetPostalCodePricingRequest {
 message GetPostalCodePricingResponse {
   repeated Pricing wash_fold = 1;
   repeated Pricing dry_clean = 2;
-  ServiceAvailability availibity = 3;
+  ServiceAvailability availability = 3;
 }
