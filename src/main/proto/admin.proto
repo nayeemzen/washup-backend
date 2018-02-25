@@ -76,3 +76,11 @@ message GetOrderRequestAdmin {
 message GetOrderResponseAdmin {
   GetOrderDataAdmin order_data = 1;
 }
+
+message SendValetArrivingNotificationRequestAdmin {
+  string order_token = 1;
+}
+
+message SendValetArrivingNotificationResponseAdmin {
+  string order_token = 1;
+}

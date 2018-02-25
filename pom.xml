@@ -124,30 +124,36 @@
 			<version>${jsonwebtoken-jwt}</version>
 		</dependency>
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.7</version>
-        </dependency>
+		<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.7</version>
+		</dependency>
 
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java-util</artifactId>
-            <version>3.5.1</version>
-        </dependency>
+		<dependency>
+				<groupId>com.google.protobuf</groupId>
+				<artifactId>protobuf-java-util</artifactId>
+				<version>3.5.1</version>
+		</dependency>
 
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.9.9</version>
-        </dependency>
+		<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>2.9.9</version>
+		</dependency>
 
-        <dependency>
-          <groupId>com.sendgrid</groupId>
-          <artifactId>sendgrid-java</artifactId>
-          <version>4.1.2</version>
-        </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>com.sendgrid</groupId>
+			<artifactId>sendgrid-java</artifactId>
+			<version>4.1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.twilio.sdk</groupId>
+			<artifactId>twilio</artifactId>
+			<version>7.17.0</version>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<extensions>
@@ -250,15 +256,15 @@
 				</executions>
 			</plugin>
 
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>5.0.5</version>
-								<configuration>
-									<url>jdbc:mysql://localhost:3306/washup_development</url>
-									<user>root</user>
-								</configuration>
-            </plugin>
+			<plugin>
+					<groupId>org.flywaydb</groupId>
+					<artifactId>flyway-maven-plugin</artifactId>
+					<version>5.0.5</version>
+					<configuration>
+						<url>jdbc:mysql://localhost:3306/washup_development</url>
+						<user>root</user>
+					</configuration>
+			</plugin>
 
 		</plugins>
 	</build>

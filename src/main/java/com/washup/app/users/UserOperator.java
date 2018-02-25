@@ -36,6 +36,10 @@ public class UserOperator extends AbstractOperator<DbUser> {
     return entity.getEmail();
   }
 
+  public String getPhoneNumber() {
+    return entity.getPhoneNumber();
+  }
+
   public UserOperator setFirstName(String firstName) {
     checkArgument(!Strings.isNullOrEmpty(firstName));
     entity.setFirstName(firstName);

@@ -13,7 +13,7 @@ public class OrderToken extends Token {
 
   public OrderToken(String token) {
     super(token);
-    checkArgument(token.startsWith(PREFIX), "%s is not UserToken", token);
+    checkArgument(token.startsWith(PREFIX), "%s is not OrderToken", token);
   }
 
   public static OrderToken of(String token) {

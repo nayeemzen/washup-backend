@@ -4,7 +4,8 @@ import com.washup.app.integrations.stripe.RealStripeApi;
 import com.washup.app.integrations.stripe.StripeApi;
 import com.washup.app.notifications.email.EmailNotificationService;
 import com.washup.app.notifications.email.RealEmailNotificationService;
-import javax.inject.Singleton;
+import com.washup.app.notifications.sms.RealSmsNotificationService;
+import com.washup.app.notifications.sms.SmsNotificationService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -30,5 +31,11 @@ public class WashUpApplication {
   @Bean
   public StripeApi stripeApi(RealStripeApi realStripeApi) {
     return realStripeApi;
+  }
+
+  @Bean
+  public SmsNotificationService smsNotificationService(
+      RealSmsNotificationService realSmsNotificationService) {
+    return realSmsNotificationService;
   }
 }

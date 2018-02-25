@@ -25,6 +25,14 @@ public class OrderOperator extends AbstractOperator<DbOrder> {
     return entity.getId();
   }
 
+  public OrderStatus getStatus() {
+    return entity.getStatus();
+  }
+
+  public OrderType getOrderType() {
+    return entity.getOrderType();
+  }
+
   public OrderAdmin toInternal() {
     return entity.toInternal();
   }

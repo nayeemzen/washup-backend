@@ -29,6 +29,10 @@ public class WashUpEmployeeOperator {
     return washUpEmployee.getId();
   }
 
+  public String getFirstName() {
+    return washUpEmployee.getFirstName();
+  }
+
   public String getEncodedPassword() {
     return washUpEmployee.getEncodedPassword();
   }
