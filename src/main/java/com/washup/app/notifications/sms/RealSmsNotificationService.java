@@ -11,15 +11,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RealSmsNotificationService implements SmsNotificationService {
-  private final static String TWILLIO_SID_KEY_NAME = "TWILLIO_SID";
-  private final static String TWILLIO_AUTH_KEY_NAME = "TWILLIO_AUTH_TOKEN";
+  private final static String TWILIO_SID_KEY_NAME = "TWILIO_SID";
+  private final static String TWILIO_AUTH_KEY_NAME = "TWILIO_AUTH_TOKEN";
 
   private final static PhoneNumber WASHUP_NUMBER = new PhoneNumber("+18887012044");
 
   @Autowired RealSmsNotificationService(Environment environment) {
-    String twillioSid = checkNotNull(environment.getProperty(TWILLIO_SID_KEY_NAME));
-    String twillioAuthToken = checkNotNull(environment.getProperty(TWILLIO_AUTH_KEY_NAME));
-    Twilio.init(twillioSid, twillioAuthToken);
+    String TWILIOSid = checkNotNull(environment.getProperty(TWILIO_SID_KEY_NAME));
+    String TWILIOAuthToken = checkNotNull(environment.getProperty(TWILIO_AUTH_KEY_NAME));
+    Twilio.init(TWILIOSid, TWILIOAuthToken);
   }
 
   @Override

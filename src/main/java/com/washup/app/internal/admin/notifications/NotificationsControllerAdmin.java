@@ -28,9 +28,9 @@ public class NotificationsControllerAdmin {
   static final String URL = ADMIN_URL + "/notifications";
 
   private static final String PICKUP_MESSAGE =
-      "Your WashUp valet %s will be there shortly to pickup your cloths for %s.";
+      "Your WashUp valet %s will be there shortly to pickup your clothes for %s.";
   private static final String DROPOFF_MESSAGE =
-      "Your WashUp valet %s will be there shortly to drop off your freshly cleaned cloths!";
+      "Your WashUp valet %s will be there shortly to drop off your freshly cleaned clothes!";
 
   @Autowired
   Transacter transacter;
