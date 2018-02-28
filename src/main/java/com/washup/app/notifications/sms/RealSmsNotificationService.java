@@ -24,6 +24,9 @@ public class RealSmsNotificationService implements SmsNotificationService {
 
   @Override
   public void send(String phoneNumber, String text) {
-    Message.creator(new PhoneNumber("+1" + phoneNumber), WASHUP_NUMBER, text).create();
+    PhoneNumber number = text.startsWith("1")
+        ? new PhoneNumber("+" + text)
+        : new PhoneNumber("+1" + phoneNumber);
+    Message.creator(number, WASHUP_NUMBER, text).create();
   }
 }

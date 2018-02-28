@@ -16,6 +16,7 @@ enum OrderStatus {
   PICKED_UP = 2;
   DROPPED_OFF = 3;
   BILLED = 4;
+  CANCELED = 5;
 }
 
 message Error {
