@@ -92,7 +92,7 @@ public class DbUser extends TimestampEntity implements IdEntity {
         .uniqueResult();
     return UserAdmin.newBuilder()
         .setAddress(address != null ? address.toInternal() : AddressAdmin.newBuilder().build())
-        .setFullName(Strings.nullToEmpty(getFirstName()) + Strings.nullToEmpty(getLastName()))
+        .setFullName(Strings.nullToEmpty(getFirstName()) + " " + Strings.nullToEmpty(getLastName()))
         .setPhoneNumber(phoneNumber)
         .setEmail(email)
         .build();
