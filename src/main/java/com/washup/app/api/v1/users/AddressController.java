@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.washup.app.api.v1.ApiConstants.API_URL;
 
 import com.google.common.base.Strings;
+import com.washup.app.common.PostalCode;
 import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.exception.ParametersChecker;
 import com.washup.app.pricing.PostalCodeOperator;
@@ -48,6 +49,7 @@ public class AddressController {
     ParametersChecker.check(!Strings.isNullOrEmpty(address.getPostalCode()),
         "postal_code is missing");
 
+    PostalCode postalCode = PostalCode.parse(address.getPostalCode());
     return transacter.call(session -> {
       UserOperator user = userOperatorFactory.getAuthenticatedUser(session,
           authentication);
@@ -59,7 +61,7 @@ public class AddressController {
             user.getId(),
             address.getStreetAddress(),
             address.getApt(),
-            address.getPostalCode(),
+            postalCode,
             address.getNotes());
       } else {
         addressOperator.setStreetAddress(address.getStreetAddress())

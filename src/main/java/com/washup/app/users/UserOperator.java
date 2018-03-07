@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static org.hibernate.criterion.Restrictions.eq;
 
 import com.google.common.base.Strings;
+import com.washup.app.common.PhoneNumber;
 import com.washup.app.database.hibernate.AbstractOperator;
 import com.washup.app.database.hibernate.Id;
 import com.washup.protos.App;
@@ -82,7 +83,7 @@ public class UserOperator extends AbstractOperator<DbUser> {
         @Nullable String lastName,
         String email,
         String rawPassword,
-        String phoneNumber) {
+        PhoneNumber phoneNumber) {
       // Make sure rawPassword is hashed
       String password = bCryptPasswordEncoder.encode(rawPassword);
       DbUser dbUser = DbUser.create(session, firstName, lastName, email,

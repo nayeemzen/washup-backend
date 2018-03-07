@@ -1,5 +1,6 @@
 package com.washup.app.users;
 
+import com.washup.app.common.PostalCode;
 import com.washup.app.database.hibernate.Id;
 import com.washup.protos.App;
 import org.hibernate.Session;
@@ -72,7 +73,7 @@ public class AddressOperator {
         Id<DbUser> userId,
         String streetAddress,
         @Nullable String apt,
-        String postalCode,
+        PostalCode postalCode,
         @Nullable String notes) {
       DbAddress address = DbAddress.create(session, userId, streetAddress, apt,
           postalCode, notes);

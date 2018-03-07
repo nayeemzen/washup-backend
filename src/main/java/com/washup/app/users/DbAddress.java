@@ -2,6 +2,7 @@ package com.washup.app.users;
 
 import static org.hibernate.criterion.Restrictions.eq;
 
+import com.washup.app.common.PostalCode;
 import com.washup.app.database.hibernate.Id;
 import com.washup.app.database.hibernate.IdEntity;
 import com.washup.app.database.hibernate.TimestampEntity;
@@ -102,13 +103,13 @@ public class DbAddress extends TimestampEntity implements IdEntity {
       Id<DbUser> userId,
       String streetAddress,
       @Nullable String apt,
-      String postalCode,
+      PostalCode postalCode,
       @Nullable String notes) {
     DbAddress dbAddress = new DbAddress();
     dbAddress.userId = userId.getId();
     dbAddress.streetAddress = streetAddress;
     dbAddress.apt = apt;
-    dbAddress.postalCode = postalCode;
+    dbAddress.postalCode = postalCode.getPostalCode();
     dbAddress.notes = notes;
 
     try {

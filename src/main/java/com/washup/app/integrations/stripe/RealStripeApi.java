@@ -1,22 +1,20 @@
 package com.washup.app.integrations.stripe;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.stripe.Stripe;
 import com.stripe.model.Charge;
 import com.stripe.model.Customer;
 import com.washup.app.orders.OrderToken;
-import java.util.HashMap;
-import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 @Service
 public class RealStripeApi implements StripeApi {
-  private static final Logger logger = LoggerFactory.getLogger(RealStripeApi.class);
   private static final String SECRET_API_KEY_NAME = "STRIPE_SECRET_API_KEY";
 
   @Autowired

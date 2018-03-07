@@ -6,6 +6,9 @@ import static com.washup.app.configuration.SecurityConstants.TOKEN_PREFIX;
 
 import com.google.common.base.Strings;
 import com.washup.app.authentication.JWTAuthenticationManager;
+import com.washup.app.common.EmailValidator;
+import com.washup.app.common.Normalizer;
+import com.washup.app.common.PhoneNumber;
 import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.exception.ParametersChecker;
 import com.washup.app.notifications.email.EmailNotificationService;
@@ -42,6 +45,8 @@ public class UserController {
   @Autowired PaymentCardOperator.Factory paymentCardOperatorFactory;
   @Autowired AddressOperator.Factory addressOperatorFactory;
   @Autowired PostalCodeOperator.Factory postalCodeOperatorFactory;
+  @Autowired Normalizer normalizer;
+  @Autowired EmailValidator emailValidator;
 
   @PostMapping("/sign-up")
   public ResponseEntity<SignUpResponse> signUp(
@@ -56,6 +61,12 @@ public class UserController {
         "password is missing");
     ParametersChecker.check(!Strings.isNullOrEmpty(request.getPhoneNumber()),
         "phone_number is missing");
+
+    String emailAddress = normalizer.removeSpaces(request.getEmail());
+    ParametersChecker.check(emailValidator.isValid(emailAddress), "email is invalid");
+
+    String phoneNumber = normalizer.removeSpaces(request.getPhoneNumber());
+    ParametersChecker.check(PhoneNumber.isValid(phoneNumber), "phone_number is invalid");
 
     ResponseEntity<SignUpResponse> response = transacter.call(session -> {
       UserOperator userOperator = userOperatorFactory.getUserByEmail(session, request.getEmail());
@@ -73,12 +84,13 @@ public class UserController {
       }
 
       // Lets create the user.
+
       userOperatorFactory.create(session,
           request.getFirstName(),
           request.getLastName(),
-          request.getEmail(),
+          emailAddress,
           request.getPassword(),
-          request.getPhoneNumber());
+          PhoneNumber.parse(phoneNumber));
       return null;
     });
 

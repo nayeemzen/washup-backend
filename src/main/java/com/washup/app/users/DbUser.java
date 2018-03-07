@@ -3,6 +3,7 @@ package com.washup.app.users;
 import static org.hibernate.criterion.Restrictions.eq;
 
 import com.google.common.base.Strings;
+import com.washup.app.common.PhoneNumber;
 import com.washup.app.database.hibernate.Id;
 import com.washup.app.database.hibernate.IdEntity;
 import com.washup.app.database.hibernate.StoreAsString;
@@ -112,14 +113,14 @@ public class DbUser extends TimestampEntity implements IdEntity {
       @Nullable String lastName,
       String email,
       String hashedPassword,
-      String phoneNumber) {
+      PhoneNumber phoneNumber) {
     DbUser dbUser = new DbUser();
     dbUser.token = UserToken.generate().getId();
     dbUser.firstName = firstName;
     dbUser.lastName = lastName;
     dbUser.email = email;
     dbUser.password = hashedPassword;
-    dbUser.phoneNumber = phoneNumber;
+    dbUser.phoneNumber = phoneNumber.getPhoneNumber();
 
     try {
       session.save(dbUser);
