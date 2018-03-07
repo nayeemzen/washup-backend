@@ -9,11 +9,15 @@ import com.washup.app.internal.admin.washup_employees.WashUpEmployeeOperator;
 import com.washup.app.orders.OrderOperator;
 import com.washup.app.orders.OrderQuery;
 import com.washup.app.orders.OrderToken;
-import com.washup.protos.Admin.GetOrderDataAdmin;
 import com.washup.protos.Admin.GetOrderRequestAdmin;
 import com.washup.protos.Admin.GetOrderResponseAdmin;
+import com.washup.protos.Admin.GetOrdersFeedRequest;
+import com.washup.protos.Admin.GetOrdersFeedResponse;
 import com.washup.protos.Admin.GetOrdersRequestAdmin;
 import com.washup.protos.Admin.GetOrdersResponseAdmin;
+import com.washup.protos.Admin.OrderDataAdmin;
+import com.washup.protos.Admin.UpdateOrderStatusRequest;
+import com.washup.protos.Admin.UpdateOrderStatusResponse;
 import com.washup.protos.Shared.OrderStatus;
 import com.washup.protos.Shared.OrderType;
 import java.util.List;
@@ -48,7 +52,7 @@ public class OrderControllerAdmin {
   @PostMapping("/get-orders-admin")
   public GetOrdersResponseAdmin getOrdersInternal(@RequestBody GetOrdersRequestAdmin request,
       Authentication authentication) {
-    List<GetOrderDataAdmin> orders = transacter.call(session -> {
+    List<OrderDataAdmin> orders = transacter.call(session -> {
       WashUpEmployeeOperator authenticatedEmployee = washUpEmployeeOperatorFactory
           .getAuthenticatedEmployee(session, authentication);
       ParametersChecker.check(
@@ -88,7 +92,7 @@ public class OrderControllerAdmin {
           .get(session, new OrderToken("#" + request.getOrderToken()));
       ParametersChecker.check(orderOperator != null, "No order found");
       return GetOrderResponseAdmin.newBuilder()
-          .setOrderData(GetOrderDataAdmin.newBuilder()
+          .setOrderData(OrderDataAdmin.newBuilder()
               .setOrder(orderOperator.toInternal())
               .setUser(orderOperator.getUser().toInternal(session))
               .build())
@@ -96,8 +100,42 @@ public class OrderControllerAdmin {
     });
   }
 
-  private GetOrderDataAdmin toData(Session session, OrderOperator order) {
-    return GetOrderDataAdmin.newBuilder()
+  @PostMapping("get-orders-feed")
+  public GetOrdersFeedResponse getOrdersFeed(@RequestBody GetOrdersFeedRequest request,
+      Authentication authentication) {
+    return transacter.call(session -> {
+      List<OrderOperator> orderOperator = orderQueryFactory.get(session)
+          .orderByDesc("createdAt")
+          .limit(Math.min(request.getMaxOrders(), 100))
+          .list();
+      List<OrderDataAdmin> orders = orderOperator.stream()
+          .map(m -> OrderDataAdmin.newBuilder()
+              .setUser(m.getUser().toInternal(session))
+              .setOrder(m.toInternal())
+              .build())
+          .collect(Collectors.toList());
+      return GetOrdersFeedResponse.newBuilder()
+          .addAllOrders(orders)
+          .build();
+    });
+  }
+
+  @PostMapping("update-status")
+  public UpdateOrderStatusResponse getOrdersFeed(@RequestBody UpdateOrderStatusRequest request,
+      Authentication authentication) {
+    return transacter.call(session -> {
+      OrderOperator orderOperator = orderOperatorFactory
+          .get(session, new OrderToken(request.getOrderToken()));
+      orderOperator.setStatus(request.getOrderStatus())
+          .update();
+      return UpdateOrderStatusResponse.newBuilder()
+          .setOrderStatus(orderOperator.getStatus())
+          .build();
+    });
+  }
+
+  private OrderDataAdmin toData(Session session, OrderOperator order) {
+    return OrderDataAdmin.newBuilder()
         .setOrder(order.toInternal())
         .setUser(order.getUser().toInternal(session))
         .build();

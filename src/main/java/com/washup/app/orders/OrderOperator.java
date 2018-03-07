@@ -45,6 +45,16 @@ public class OrderOperator extends AbstractOperator<DbOrder> {
     return entity.getUser();
   }
 
+  public OrderOperator setStatus(OrderStatus status) {
+    entity.setStatus(status.name());
+    return this;
+  }
+
+  public OrderOperator update() {
+    session.update(entity);
+    return this;
+  }
+
   @Component
   public static class Factory {
 

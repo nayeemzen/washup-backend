@@ -6,6 +6,7 @@ import com.washup.app.users.DbUser;
 import com.washup.protos.Shared.OrderStatus;
 import com.washup.protos.Shared.OrderType;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
@@ -39,6 +40,16 @@ public class OrderQuery extends AbstractQuery<DbOrder, OrderQuery, OrderOperator
     if (billed) {
       criteria.add(Restrictions.isNotNull("billedAt"));
     }
+    return this;
+  }
+
+  public OrderQuery limit(int maxResults) {
+    criteria.setMaxResults(maxResults);
+    return this;
+  }
+
+  public OrderQuery orderByDesc(String column) {
+    criteria.addOrder(Order.desc(column));
     return this;
   }
 

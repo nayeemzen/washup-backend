@@ -43,7 +43,7 @@ message UserAdmin {
   string email = 4;
 }
 
-message GetOrderDataAdmin {
+message OrderDataAdmin {
   OrderAdmin order = 1;
   UserAdmin user = 2;
 }
@@ -58,7 +58,7 @@ message GetOrdersRequestAdmin {
 }
 
 message GetOrdersResponseAdmin {
-  repeated GetOrderDataAdmin orders = 1;
+  repeated OrderDataAdmin orders = 1;
 }
 
 message SearchRequestAdmin {
@@ -74,7 +74,7 @@ message GetOrderRequestAdmin {
 }
 
 message GetOrderResponseAdmin {
-  GetOrderDataAdmin order_data = 1;
+  OrderDataAdmin order_data = 1;
 }
 
 message SendValetArrivingNotificationRequestAdmin {
@@ -83,4 +83,21 @@ message SendValetArrivingNotificationRequestAdmin {
 
 message SendValetArrivingNotificationResponseAdmin {
   string order_token = 1;
+}
+
+message GetOrdersFeedRequest {
+  uint32 max_orders = 1;
+}
+
+message GetOrdersFeedResponse {
+  repeated OrderDataAdmin orders = 1;
+}
+
+message UpdateOrderStatusRequest {
+  string order_token = 1;
+  shared.OrderStatus order_status = 2;
+}
+
+message UpdateOrderStatusResponse {
+  shared.OrderStatus order_status = 1;
 }
