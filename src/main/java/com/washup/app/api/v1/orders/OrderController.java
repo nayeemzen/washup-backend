@@ -139,6 +139,10 @@ public class OrderController {
       checkState(user.getId().equals(orderOperator.getUser().getId()));
       ItemizedReceiptOperator itemizedReceiptOperator = itemizedReceiptOperatorFactory
           .get(session, orderOperator.getId());
+      if (itemizedReceiptOperator == null) {
+        return GetReceiptResponse.newBuilder()
+            .build();
+      }
       List<ReceiptItem> receiptItems = itemizedReceiptOperator.toProto();
       long totalAmountCents = receiptItems.stream()
           .mapToLong(receiptItem -> receiptItem.getItemPriceCents() * receiptItem.getItemQuantity())
