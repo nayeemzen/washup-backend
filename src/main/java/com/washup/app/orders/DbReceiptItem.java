@@ -52,7 +52,7 @@ public class DbReceiptItem extends TimestampEntity implements IdEntity {
     return ReceiptItem.newBuilder()
         .setItemName(itemName)
         .setItemPriceCents(itemAmountCents)
-        .setItemQuatity(itemQuantity)
+        .setItemQuantity(itemQuantity)
         .setItemTotalPriceCents(itemAmountCents * itemQuantity)
         .build();
   }

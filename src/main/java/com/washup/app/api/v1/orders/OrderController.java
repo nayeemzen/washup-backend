@@ -140,10 +140,9 @@ public class OrderController {
       ItemizedReceiptOperator itemizedReceiptOperator = itemizedReceiptOperatorFactory
           .get(session, orderOperator.getId());
       List<ReceiptItem> receiptItems = itemizedReceiptOperator.toProto();
-      long totalAmountCents = 0;
-      for (ReceiptItem receiptItem : receiptItems) {
-        totalAmountCents += receiptItem.getItemPriceCents();
-      }
+      long totalAmountCents = receiptItems.stream()
+          .mapToLong(receiptItem -> receiptItem.getItemPriceCents() * receiptItem.getItemQuantity())
+          .sum();
       return GetReceiptResponse.newBuilder()
           .setReceipt(Receipt.newBuilder()
               .addAllItems(receiptItems)
