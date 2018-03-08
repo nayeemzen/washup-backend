@@ -7,6 +7,8 @@ import static java.util.stream.Collectors.toList;
 import com.google.common.base.Strings;
 import com.washup.app.database.hibernate.Transacter;
 import com.washup.app.exception.ParametersChecker;
+import com.washup.app.notifications.email.EmailNotificationService;
+import com.washup.app.notifications.email.Emails;
 import com.washup.app.orders.ItemizedReceiptOperator;
 import com.washup.app.orders.OrderOperator;
 import com.washup.app.orders.OrderQuery;
@@ -66,6 +68,9 @@ public class OrderController {
   @Autowired
   ItemizedReceiptOperator.Factory itemizedReceiptOperatorFactory;
 
+  @Autowired
+  EmailNotificationService emailNotificationService;
+
   @PostMapping("/place-order")
   public PlaceOrderResponse placeOrder(@RequestBody App.PlaceOrderRequest request,
       Authentication authentication) {
@@ -78,12 +83,12 @@ public class OrderController {
     ParametersChecker.check(request.getIdempotenceToken() != null, "idempotence_token is missing");
 
     return transacter.call(session -> {
-      UserOperator user = userOperatorFactory.getAuthenticatedUser(session, authentication);
+      UserOperator userOperator = userOperatorFactory.getAuthenticatedUser(session, authentication);
       PaymentCardOperator paymentCardOperator = paymentCardOperatorFactory
-          .get(session, user.getId());
+          .get(session, userOperator.getId());
       ParametersChecker.check(paymentCardOperator != null,
           "user must set payment card before ordering");
-      AddressOperator addressOperator = addressOperatorFactory.get(session, user.getId());
+      AddressOperator addressOperator = addressOperatorFactory.get(session, userOperator.getId());
       ParametersChecker.check(addressOperator != null, "user must set address before ordering");
       PostalCodeOperator postalCodeOperator = postalCodeOperatorFactory
           .get(session, addressOperator.getPostalCode());
@@ -101,12 +106,16 @@ public class OrderController {
             "Wash Fold is not available in your area");
       }
       OrderOperator orderOperator = orderOperatorFactory.create(session,
-          user,
+          userOperator,
           request.getOrderType(),
           request.getIdempotenceToken(),
           OrderStatus.PENDING,
           request.getDeliveryDate(),
           request.getPickupDate());
+
+      emailNotificationService.sendEmail(Emails.newOrderEmail(
+          userOperator.toProto(), orderOperator.toProto(), addressOperator.toProto()));
+
       return PlaceOrderResponse.newBuilder()
           .setOrder(orderOperator.toProto())
           .build();

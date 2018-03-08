@@ -72,10 +72,9 @@ public class UserController {
       UserOperator userOperator = userOperatorFactory.getUserByEmail(session, request.getEmail());
       // If user already exists, throw.
       if (userOperator != null) {
-        App.SignUpResponse alreadyExistResponse =
-            App.SignUpResponse.newBuilder()
-                .setAlreadyExists(true)
-                .build();
+        App.SignUpResponse alreadyExistResponse = App.SignUpResponse.newBuilder()
+            .setAlreadyExists(true)
+            .build();
         try {
           return new ResponseEntity<>(alreadyExistResponse, HttpStatus.OK);
         } catch (Exception e) {
