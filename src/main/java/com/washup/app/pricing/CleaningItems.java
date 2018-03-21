@@ -38,7 +38,10 @@ public class CleaningItems {
 
     // Wash & Fold
     PER_POUND("Per Pound"),
-    DOUBLE_BLANKET("Double Blanket");
+    DOUBLE_BLANKET("Double/Twin Blanket or Comforter"),
+    QUEEN_COMFORTER("Queen Blanket or Comforter"),
+    KING_COMFORTER("King Blanket or Comforter"),
+    BED_SPREAD("Bed Spread or Sheets");
 
     public String canonicalName;
 
@@ -62,5 +65,10 @@ public class CleaningItems {
       Item.COAT,
       Item.DUVET);
 
-  public final static Set<Item> WASH_FOLD = ImmutableSet.of(Item.PER_POUND, Item.DOUBLE_BLANKET);
+  public final static Set<Item> WASH_FOLD = ImmutableSet.of(
+      Item.PER_POUND,
+      Item.DOUBLE_BLANKET,
+      Item.QUEEN_COMFORTER,
+      Item.KING_COMFORTER,
+      Item.BED_SPREAD);
 }
